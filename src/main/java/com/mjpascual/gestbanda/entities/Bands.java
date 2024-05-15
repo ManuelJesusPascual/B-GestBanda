@@ -1,5 +1,7 @@
 package com.mjpascual.gestbanda.entities;
 
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
+import com.mjpascual.gestbanda.dto.bands.CreateBandRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,5 +55,26 @@ public class Bands {
 
     @Transient
     private List<BandHasInstruments> bandHasInstruments;
+
+    public static Bands from(CreateBandRequest createBandRequest) {
+        return Bands.builder()
+                .name(createBandRequest.getName())
+                .build();
+
+    }
+
+    public static Bands from(BandsResponse bandDTO) {
+        return Bands.builder()
+                .id(bandDTO.getId())
+                .name(bandDTO.getName())
+                .img(bandDTO.getImg())
+                .subscription_id(bandDTO.getSubscription_id())
+                .subscription_end(bandDTO.getSubscription_end())
+                .updated_at(bandDTO.getUpdated_at())
+                .created_at(bandDTO.getCreated_at())
+                .build();
+
+    }
+
 
 }

@@ -1,11 +1,11 @@
 package com.mjpascual.gestbanda.services;
 
-import com.mjpascual.gestbanda.dto.bands.BandsDTO;
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.bands.CreateBandRequest;
-import com.mjpascual.gestbanda.dto.main.MainDTO;
+import com.mjpascual.gestbanda.dto.main.MainResponse;
 import com.mjpascual.gestbanda.dto.starter.CreateStarterRequest;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
-import com.mjpascual.gestbanda.dto.users.UsersDTO;
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.entities.UserHasRoleInBand;
 import com.mjpascual.gestbanda.entities.Users;
@@ -43,11 +43,11 @@ public class StarterService {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public MainDTO createBand(CreateStarterRequest request) {
+    public MainResponse createBand(CreateStarterRequest request) {
         CreateBandRequest band = request.getBand();
         CreateUserRequest user = request.getUser();
-        Bands bandMapped = bandMapper.map(band); //TODO: Se podria hacer request.getBand y listo y abajo request.getUser
-        Users userMapped = userMapper.map(user);
+        Bands bandMapped = Bands.from(band); //TODO: Se podria hacer request.getBand y listo y abajo request.getUser ((  Bands bandMapped = Bands.from(request.getBand);  ))
+        Users userMapped = Users.from(user);
         UsersInBand userInBand = UsersInBand.builder().id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
         UserHasRoleInBand userHasRoleInBand = UserHasRoleInBand.builder().id(null).role_id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
 
@@ -60,7 +60,7 @@ public class StarterService {
     }
 
 
-    private MainDTO saveAll(Bands band, Users user, UsersInBand usersInBand, UserHasRoleInBand userHasRoleInBand) {
+    private MainResponse saveAll(Bands band, Users user, UsersInBand usersInBand, UserHasRoleInBand userHasRoleInBand) {
         Bands bandSaved = bandsService.createBand(band); //SubscriptionID debe ser null porque la banda se crea antes de que se haya pagado la suscripción y despues de pagarla se actualiza.
         Users userSaved = usersService.createUser(user);
         /**
@@ -76,12 +76,12 @@ public class StarterService {
     }
 
 
-    private MainDTO generateResponse(Bands band, Users user) {
+    private MainResponse generateResponse(Bands band, Users user) {
 
-        UsersDTO userResponse = userMapper.map(user);
-        BandsDTO bandResponse = bandMapper.map(band);
+        UsersResponse userResponse = UsersResponse.from(user);
+        BandsResponse bandResponse = BandsResponse.from(band);
 
-        MainDTO mainResponse = MainDTO.builder().band(bandResponse).user(userResponse).build();
+        MainResponse mainResponse = MainResponse.builder().band(bandResponse).user(userResponse).build();
         return mainResponse;
 
     }

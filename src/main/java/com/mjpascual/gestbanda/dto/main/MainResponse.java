@@ -1,8 +1,8 @@
 package com.mjpascual.gestbanda.dto.main;
 
 
-import com.mjpascual.gestbanda.dto.bands.BandsDTO;
-import com.mjpascual.gestbanda.dto.users.UsersDTO;
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import lombok.*;
 
 @Getter
@@ -11,9 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-public class MainDTO {
-    private BandsDTO band;
-    private UsersDTO user;
+public class MainResponse {
+    private BandsResponse band;
+    private UsersResponse user;
 
     /**
      * TODO: Se que seguramente me diga que en vez de hacerlo así meta BandsDTO dentro de UsersDTO

@@ -1,5 +1,7 @@
 package com.mjpascual.gestbanda.entities;
 
+import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,5 +54,32 @@ public class Users {
 
     @Transient
     private List<UserHasInstruments> userHasInstruments;
+
+
+    public static Users from(UsersResponse userDTO) {
+        return Users.builder()
+                .id(userDTO.getId())
+                .name(userDTO.getName())
+                .email(userDTO.getEmail())
+                .phone(userDTO.getPhone())
+                .usersInBand(userDTO.getUsersInBand())
+                .userHasRoleInBand(userDTO.getUserHasRoleInBand())
+                .userGoTravel(userDTO.getUserGoTravel())
+                .userHasClothes(userDTO.getUserHasClothes())
+                .userHasInstruments(userDTO.getUserHasInstruments())
+                .build();
+
+    }
+
+    public static Users from(CreateUserRequest createUserRequest) {
+        return Users.builder()
+                .name(createUserRequest.getName())
+                .email(createUserRequest.getEmail())
+                .password(createUserRequest.getPassword()) //TODO: Encriptar esto
+                .phone(createUserRequest.getPhone())
+                .build();
+
+    }
+
 
 }
