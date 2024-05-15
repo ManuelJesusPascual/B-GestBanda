@@ -16,6 +16,6 @@ public class MainResponse {
     private UsersResponse user;
 
     /**
-     * TODO: Se que seguramente me diga que en vez de hacerlo así meta BandsDTO dentro de UsersDTO
+     * TODO: Se que seguramente me diga que en vez de hacerlo así meta BandsDTO dentro de UsersDTO (Yep es lo suyo para que asi lo tengas mas resumido )
      */
 }

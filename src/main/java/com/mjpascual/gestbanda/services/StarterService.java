@@ -46,7 +46,7 @@ public class StarterService {
     public MainResponse createBand(CreateStarterRequest request) {
         CreateBandRequest band = request.getBand();
         CreateUserRequest user = request.getUser();
-        Bands bandMapped = Bands.from(band); //TODO: Se podria hacer request.getBand y listo y abajo request.getUser ((  Bands bandMapped = Bands.from(request.getBand);  ))
+        Bands bandMapped = Bands.from(band); //TODO: Se podria hacer request.getBand y listo y abajo request.getUser ((  Bands bandMapped = Bands.from(request.getBand);  Yep eso es correcto))
         Users userMapped = Users.from(user);
         UsersInBand userInBand = UsersInBand.builder().id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
         UserHasRoleInBand userHasRoleInBand = UserHasRoleInBand.builder().id(null).role_id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
@@ -64,13 +64,13 @@ public class StarterService {
         Bands bandSaved = bandsService.createBand(band); //SubscriptionID debe ser null porque la banda se crea antes de que se haya pagado la suscripción y despues de pagarla se actualiza.
         Users userSaved = usersService.createUser(user);
         /**
-         * TODO: ¿Se debe llamar antes a band o a user?
+         * TODO: ¿Se debe llamar antes a band o a user? Depende de la logica de dependencia de la base de datos si el usuario necesita una banda necesitas primero crear la banda y luego el usuario
          */
         UsersInBand userInBandSaved = usersInBandService.createUserInBand(usersInBand);
         UserHasRoleInBand userHasRoleInBandSaved = userRoleInBandService.createUserRoleInBand(userHasRoleInBand);
 
         /**
-         * TODO: Intuyo que las listas no hace falta devolverlas en una primera instancia sino que después se hace una llamada a ese repo y ya
+         * TODO: Intuyo que las listas no hace falta devolverlas en una primera instancia sino que después se hace una llamada a ese repo y ya ( Esto debe de devolver un objeto request y no una lista )
          */
         return generateResponse(bandSaved, userSaved);
     }
