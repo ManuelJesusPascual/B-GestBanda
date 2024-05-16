@@ -25,7 +25,6 @@ public class UsersService {
     public UsersResponse createUser (Users user){
 
         return UsersResponse.from(usersRepository.save(user));
-
     }
 
 }

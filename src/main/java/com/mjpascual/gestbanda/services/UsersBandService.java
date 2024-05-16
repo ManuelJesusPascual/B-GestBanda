@@ -17,12 +17,12 @@ public class UsersBandService {
 
     /**
      * Método que crea una nueva tupla en la relación UsersBands
-     * @return Tupla creada
+     * @return Tupla creada ( Esto te lo ha generado IA verdad? xD)
      */
 
     @Transactional(rollbackOn = Exception.class)
     public UsersInBand createUserInBand (UsersInBand userInBand){
-
+        //TODO: retorna la response no la entitie
         return usersBandRepository.save(userInBand);
 
     }
