@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.services;
 
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.entities.Users;
 import com.mjpascual.gestbanda.repositories.UsersRepository;
@@ -21,9 +22,9 @@ public class UsersService {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public Users createUser (Users user){
+    public UsersResponse createUser (Users user){
 
-        return usersRepository.save(user);
+        return UsersResponse.from(usersRepository.save(user));
 
     }
 
