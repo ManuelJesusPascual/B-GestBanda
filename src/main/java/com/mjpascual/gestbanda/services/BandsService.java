@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.services;
 
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
@@ -25,17 +26,10 @@ public class BandsService  {
      */
     private final BandsRepository bandsRepository;
 
-    private final UsersRepository usersRepository;
-
-    private final UserRoleInBandRepository userRoleInBandRepository;
-
-    private final UsersBandRepository usersInBandRepository;
     @Autowired
-    public BandsService(BandsRepository bandsRepository, UsersRepository usersRepository, UserRoleInBandRepository userRoleInBandRepository, UsersBandRepository usersInBandRepository) {
+    public BandsService(BandsRepository bandsRepository) {
         this.bandsRepository = bandsRepository;
-        this.usersRepository = usersRepository;
-        this.userRoleInBandRepository = userRoleInBandRepository;
-        this.usersInBandRepository = usersInBandRepository;
+
     }
 
     /**
@@ -56,9 +50,9 @@ public class BandsService  {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public Bands createBand (Bands band){
+    public BandsResponse createBand (Bands band){
 
-        return bandsRepository.save(band);
+        return BandsResponse.from(bandsRepository.save(band));
 
     }
 

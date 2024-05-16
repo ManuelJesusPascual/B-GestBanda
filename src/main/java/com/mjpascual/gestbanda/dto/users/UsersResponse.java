@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.dto.users;
 
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.entities.*;
 import lombok.*;
 
@@ -22,10 +23,9 @@ public class UsersResponse {
 
     private String phone;
 
-    private  List<UsersInBand> usersInBand;
+    private List<UsersInBand> usersInBand;
 
     private List<UserHasRoleInBand> userHasRoleInBand;
-
 
     private List<UserGoTravel> userGoTravel;
 
