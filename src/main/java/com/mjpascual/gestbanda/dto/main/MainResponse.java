@@ -5,6 +5,7 @@ import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.entities.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,6 +50,30 @@ public class MainResponse {
                 .band(band)
                 .usersInBand(user.getUsersInBand())
                 .userHasRoleInBand(user.getUserHasRoleInBand())
+                .userGoTravel(user.getUserGoTravel())
+                .userHasClothes(user.getUserHasClothes())
+                .userHasInstruments(user.getUserHasInstruments())
+                .build();
+
+    }
+
+//TODO: Revisar esto despues de revisar el comentario de MainRepsonse y de StarterService
+
+    public static MainResponse from(UsersResponse user, BandsResponse band, UsersInBand usersInBand, UserHasRoleInBand userHasRoleInBand) {
+        List<UsersInBand> usersInBandList = new ArrayList<>();
+        usersInBandList.add(usersInBand);
+        List<UserHasRoleInBand> userHasRoleInBandList = new ArrayList<>();
+        userHasRoleInBandList.add(userHasRoleInBand);
+
+
+        return MainResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .band(band)
+                .usersInBand(usersInBandList)
+                .userHasRoleInBand(userHasRoleInBandList)
                 .userGoTravel(user.getUserGoTravel())
                 .userHasClothes(user.getUserHasClothes())
                 .userHasInstruments(user.getUserHasInstruments())

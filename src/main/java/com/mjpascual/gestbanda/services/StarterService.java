@@ -64,7 +64,9 @@ public class StarterService {
 
         // TODO: Revisar comentario MainResponse para saber que hacer con estas listas, creo que si deben incluirse en el .from de MainResponse
 
-        return MainResponse.from(userSaved, bandSaved);
+        //Las añado y sino despues lo modifico
+
+        return MainResponse.from(userSaved, bandSaved,userInBandSaved,userHasRoleInBandSaved);
     }
 
 
