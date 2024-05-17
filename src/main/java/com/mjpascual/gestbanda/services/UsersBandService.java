@@ -1,6 +1,5 @@
 package com.mjpascual.gestbanda.services;
 
-import com.mjpascual.gestbanda.entities.Users;
 import com.mjpascual.gestbanda.entities.UsersInBand;
 import com.mjpascual.gestbanda.repositories.UsersBandRepository;
 import jakarta.transaction.Transactional;
@@ -17,12 +16,11 @@ public class UsersBandService {
 
     /**
      * Método que crea una nueva tupla en la relación UsersBands
-     * @return Tupla creada ( Esto te lo ha generado IA verdad? xD)
+     * @return Tupla creada
      */
 
     @Transactional(rollbackOn = Exception.class)
     public UsersInBand createUserInBand (UsersInBand userInBand){
-        //TODO: retorna la response no la entitie
         return usersBandRepository.save(userInBand);
 
     }

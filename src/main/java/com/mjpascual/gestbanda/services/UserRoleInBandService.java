@@ -22,7 +22,6 @@ public class UserRoleInBandService {
 
     @Transactional(rollbackOn = Exception.class)
     public UserHasRoleInBand createUserRoleInBand (UserHasRoleInBand userRoleInBand){
-        //TODO: retorna la response no la entitie
         return userRoleInBandRepository.save(userRoleInBand);
 
     }
