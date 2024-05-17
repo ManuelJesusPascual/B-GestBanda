@@ -1,9 +1,9 @@
 package com.mjpascual.gestbanda.exceptions;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 
 /**
@@ -12,14 +12,22 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class GestBandaException extends RuntimeException {
+
 
   private static final long serialVersionUID = 1L;
 
   private Exception error; // Error Exception (Nullpointer etc)
   private String message; // Mensaje descriptivo de la excepcion
   private ErrorCodes code; //Numero propio personalizado, @see ErrorCodes
+
+  public GestBandaException(Exception error, String message, ErrorCodes code) {
+    super(message);
+    this.error = error;
+    this.message = message;
+    this.code = code;
+  }
 
   public GestBandaException from (Exception error, String message) {
     return GestBandaException.builder().error(error).message(message).build();

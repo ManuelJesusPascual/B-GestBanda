@@ -44,10 +44,12 @@ public class StarterService {
     public MainResponse createBand(CreateStarterRequest request) {
         Bands bandMapped = Bands.from(request.getBand());
         Users userMapped = Users.from(request.getUser());
-        UsersInBand userInBand = UsersInBand.builder().id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
-        UserHasRoleInBand userHasRoleInBand = UserHasRoleInBand.builder().id(null).role_id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
 
-        //Se debe llamar al servicio que almacena las imagenes para que guarde la imagen de la banda y devuelva la url. O sino crearla con url de imagen a null y despues del pago actualizarla, asi te aseguras que no haya bandas sin pagar ocupando almacenamiento.
+
+        UsersInBand userInBand = UsersInBand.builder().id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
+        //TODO: Se debe llamar a RolesService para obtener el rol 'Director General' y pasarselo a role_id
+        UserHasRoleInBand userHasRoleInBand = UserHasRoleInBand.builder().id(null).role_id(null).band_id(bandMapped).user_id(userMapped).updated_at(null).created_at(new Date()).build();
+        //TODO: Se debe llamar al servicio que almacena las imagenes para que guarde la imagen de la banda y devuelva la url. O sino crearla con url de imagen a null y despues del pago actualizarla, asi te aseguras que no haya bandas sin pagar ocupando almacenamiento.
       
         return saveAll(bandMapped, userMapped, userInBand, userHasRoleInBand);
 
@@ -55,7 +57,10 @@ public class StarterService {
 
 
     private MainResponse saveAll(Bands band, Users user, UsersInBand usersInBand, UserHasRoleInBand userHasRoleInBand) {
-      
+        //TODO: Ver como hacer esto mejor
+        band.setCreated_at(new Date());
+        user.setCreated_at(new Date());
+
         BandsResponse bandSaved = bandsService.createBand(band); //SubscriptionID debe ser null porque la banda se crea antes de que se haya pagado la suscripción y despues de pagarla se actualiza.
         UsersResponse userSaved = usersService.createUser(user);
 

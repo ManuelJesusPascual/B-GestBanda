@@ -4,7 +4,7 @@ CREATE TABLE bands(
                         id uuid,
                         name varchar(120) NOT NULL,
                         img varchar(255),
-                        subscription_id varchar(255) NOT NULL,
+                        subscription_id varchar(255) , -- No se pone not null ya que primero se crea la banda y despues se actualiza y se inserta la suscripcion
                         subscription_end timestamp,
                         updated_at timestamp,
                         created_at timestamp NOT NULL,
