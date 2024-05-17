@@ -1,7 +1,6 @@
 package com.mjpascual.gestbanda.services;
 
 import com.mjpascual.gestbanda.entities.UserHasRoleInBand;
-
 import com.mjpascual.gestbanda.repositories.UserRoleInBandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

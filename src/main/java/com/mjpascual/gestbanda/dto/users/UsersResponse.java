@@ -1,6 +1,5 @@
 package com.mjpascual.gestbanda.dto.users;
 
-import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.entities.*;
 import lombok.*;
 

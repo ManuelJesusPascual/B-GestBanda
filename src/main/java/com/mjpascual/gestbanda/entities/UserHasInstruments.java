@@ -1,7 +1,6 @@
 package com.mjpascual.gestbanda.entities;
 
 import jakarta.persistence.*;
-
 import lombok.*;
 
 import java.util.UUID;
