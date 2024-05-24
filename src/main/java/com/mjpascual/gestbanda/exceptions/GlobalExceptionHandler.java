@@ -75,7 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return ResponseEntity con los detalles de la excepción
    */
 
-  //TODO: He añadido esto porque cuando da un error por ejemplo en sql de que en la bbdd esta puesto not null y le envio un null por ejemplo
+  //TODOSIR: He añadido esto porque cuando da un error por ejemplo en sql de que en la bbdd esta puesto not null y le envio un null por ejemplo
   // No estaba controlado, pero el problema es que webRequest.getDescription da demasiados datos, hay que ver como controlo eso
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorDetailed> handleGeneralException(

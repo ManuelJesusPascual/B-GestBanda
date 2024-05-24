@@ -1,5 +1,8 @@
 package com.mjpascual.gestbanda.entities;
 
+import com.mjpascual.gestbanda.dto.roles.RolesResponse;
+import com.mjpascual.gestbanda.dto.userHasRoleInBand.CreateUserHasRoleInBandRequest;
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,5 +39,16 @@ public class UserHasRoleInBand {
 
     @Column(name = "created_at")
     private Date created_at;
+
+    public static UserHasRoleInBand from(CreateUserHasRoleInBandRequest createUserHasRoleInBandRequest) {
+        return UserHasRoleInBand.builder()
+                .role_id(Roles.from(createUserHasRoleInBandRequest.getRole_id()))
+                .user_id(createUserHasRoleInBandRequest.getUser_id())
+                .band_id(createUserHasRoleInBandRequest.getBand_id())
+                .updated_at(createUserHasRoleInBandRequest.getUpdated_at())
+                .created_at(createUserHasRoleInBandRequest.getCreated_at())
+                .build();
+
+    }
 
 }

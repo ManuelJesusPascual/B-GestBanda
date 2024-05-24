@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController // TODO: @RestController o Controller?
+@RestController // TODOSIR: @RestController o Controller?, intuyo que restcontroller por eso lo pongo asi
 public class StarterController {
 
 
