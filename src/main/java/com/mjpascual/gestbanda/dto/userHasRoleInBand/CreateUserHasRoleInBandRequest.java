@@ -9,9 +9,6 @@ import lombok.*;
 import java.util.Date;
 import java.util.UUID;
 
-//TODOSIR: No se pa que cojones tengo que hacer esto si tiene los mismos datos que la entidad pero weno, en este caso lo hago solamente
-// para pasarle RolesResponse en vez de Roles,pero que pasa lo mismo con RolesResponse, si tiene los mismos datos de la entidad
-
 
 @Getter
 @Setter

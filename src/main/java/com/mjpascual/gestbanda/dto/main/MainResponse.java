@@ -27,7 +27,7 @@ public class MainResponse {
 
     private String phone;
 
-    private BandsResponse band; //TODO: Ver como controlar el que como el usuario tiene varias bandas, tendrá  que tener una lista para seleccionar que banda quiere visualizar,
+    private BandsResponse band; //TODOSIR: Ver como controlar el que como el usuario tiene varias bandas, tendrá  que tener una lista para seleccionar que banda quiere visualizar,
     // y este atributo se rellenará conforme a la banda que este seleccionada en esa lista, pero esa lista ¿Donde esta?
     // Porque usersInBand solo contiene el id de las bandas que esta este usuario, pero hace falta ni aunque sea un  nombrecito para ponerlo en la lista
     // Se me ocurre que cada vez que entre en esa lista de selección de banda haga una petición a la API para obtener una lista con los datos de las bandas que estan
@@ -78,7 +78,7 @@ public class MainResponse {
 
     }
 
-//TODO: Revisar esto despues de revisar el comentario de MainResponse y de StarterService
+//TODOSIR: Revisar esto despues de revisar el comentario de MainResponse y de StarterService
 
 
 

@@ -65,7 +65,6 @@ public class StarterService {
 
 
     private MainResponse saveAll(Bands band, Users user, UsersInBand usersInBand, CreateUserHasRoleInBandRequest userHasRoleInBand) {
-        //TODOSIR: Ver como hacer esto mejor
         band.setCreated_at(new Date());
         user.setCreated_at(new Date());
 
