@@ -1,7 +1,9 @@
 package com.mjpascual.gestbanda.dto.main;
 
 import com.mjpascual.gestbanda.dto.bands.BandsResponse;
+import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
+import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
 import com.mjpascual.gestbanda.entities.*;
 import lombok.*;
 
@@ -31,9 +33,9 @@ public class MainResponse {
     // Se me ocurre que cada vez que entre en esa lista de selección de banda haga una petición a la API para obtener una lista con los datos de las bandas que estan
     // En usersInBand y ahí mostrarlo en la lista, pero eso es peruanada de manual
 
-    private List<UsersInBand> usersInBand;
+    private List<UsersInBandResponse> usersInBandResponse;
 
-    private List<UserHasRoleInBand> userHasRoleInBand;
+    private List<UserHasRoleInBandResponse> userHasRoleInBandResponse;
 
     private List<UserGoTravel> userGoTravel;
 
@@ -48,8 +50,8 @@ public class MainResponse {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .band(band)
-                .usersInBand(user.getUsersInBand())
-                .userHasRoleInBand(user.getUserHasRoleInBand())
+                .usersInBandResponse(user.getUsersInBandResponse())
+                .userHasRoleInBandResponse(user.getUserHasRoleInBandResponse())
                 .userGoTravel(user.getUserGoTravel())
                 .userHasClothes(user.getUserHasClothes())
                 .userHasInstruments(user.getUserHasInstruments())
@@ -57,29 +59,28 @@ public class MainResponse {
 
     }
 
-//TODO: Revisar esto despues de revisar el comentario de MainRepsonse y de StarterService
+    public static MainResponse from(UsersResponse userResponse, BandsResponse bandResponse, UsersInBandResponse userInBandResponse, UserHasRoleInBandResponse userHasRoleInBandResponse) {
 
-    public static MainResponse from(UsersResponse user, BandsResponse band, UsersInBand usersInBand, UserHasRoleInBand userHasRoleInBand) {
-        List<UsersInBand> usersInBandList = new ArrayList<>();
-        usersInBandList.add(usersInBand);
-        List<UserHasRoleInBand> userHasRoleInBandList = new ArrayList<>();
-        userHasRoleInBandList.add(userHasRoleInBand);
-
+        List<UsersInBandResponse> userInBandResponseList = new ArrayList<>();
+        userInBandResponseList.add(userInBandResponse);
+        List<UserHasRoleInBandResponse> userHasRoleInBandResponseList = new ArrayList<>();
+        userHasRoleInBandResponseList.add(userHasRoleInBandResponse);
 
         return MainResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .phone(user.getPhone())
-                .band(band)
-                .usersInBand(usersInBandList)
-                .userHasRoleInBand(userHasRoleInBandList)
-                .userGoTravel(user.getUserGoTravel())
-                .userHasClothes(user.getUserHasClothes())
-                .userHasInstruments(user.getUserHasInstruments())
+                .id(userResponse.getId())
+                .name(userResponse.getName())
+                .email(userResponse.getEmail())
+                .phone(userResponse.getPhone())
+                .band(bandResponse)
+                .usersInBandResponse(userInBandResponseList)
+                .userHasRoleInBandResponse(userHasRoleInBandResponseList)
                 .build();
 
     }
+
+//TODO: Revisar esto despues de revisar el comentario de MainResponse y de StarterService
+
+
 
 
 }

@@ -5,7 +5,9 @@ import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.main.MainResponse;
 import com.mjpascual.gestbanda.dto.starter.CreateStarterRequest;
 import com.mjpascual.gestbanda.dto.userHasRoleInBand.CreateUserHasRoleInBandRequest;
+import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
+import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.entities.UserHasRoleInBand;
 import com.mjpascual.gestbanda.entities.Users;
@@ -14,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Service
@@ -69,14 +72,14 @@ public class StarterService {
         BandsResponse bandSaved = bandsService.createBand(band); //SubscriptionID debe ser null porque la banda se crea antes de que se haya pagado la suscripción y despues de pagarla se actualiza.
         UsersResponse userSaved = usersService.createUser(user);
 
-        UsersInBand userInBandSaved = usersInBandService.createUserInBand(usersInBand);
-        UserHasRoleInBand userHasRoleInBandSaved = userRoleInBandService.createUserRoleInBand(UserHasRoleInBand.from(userHasRoleInBand));
+        UsersInBandResponse userInBandSavedResponse = usersInBandService.createUserInBand(usersInBand);
+        UserHasRoleInBandResponse userHasRoleInBandSaved = userRoleInBandService.createUserRoleInBand(UserHasRoleInBand.from(userHasRoleInBand));
 
         // TODOSIR: Revisar comentario MainResponse para saber que hacer con estas listas, creo que si deben incluirse en el .from de MainResponse
 
         //Las añado y sino despues lo modifico
 
-        return MainResponse.from(userSaved, bandSaved,userInBandSaved,userHasRoleInBandSaved);
+        return MainResponse.from(userSaved, bandSaved,userInBandSavedResponse,userHasRoleInBandSaved);
     }
 
 

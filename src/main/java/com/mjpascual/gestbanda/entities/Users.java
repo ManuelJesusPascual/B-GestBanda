@@ -5,6 +5,7 @@ import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -62,8 +63,8 @@ public class Users {
                 .name(userDTO.getName())
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
-                .usersInBand(userDTO.getUsersInBand())
-                .userHasRoleInBand(userDTO.getUserHasRoleInBand())
+                .usersInBand(UsersInBand.from(userDTO.getUsersInBandResponse()))
+                .userHasRoleInBand(UserHasRoleInBand.from(userDTO.getUserHasRoleInBandResponse()))
                 .userGoTravel(userDTO.getUserGoTravel())
                 .userHasClothes(userDTO.getUserHasClothes())
                 .userHasInstruments(userDTO.getUserHasInstruments())
@@ -77,6 +78,11 @@ public class Users {
                 .email(createUserRequest.getEmail())
                 .password(createUserRequest.getPassword()) //TODO: Encriptar esto
                 .phone(createUserRequest.getPhone())
+                .usersInBand(new ArrayList<>())
+                .userHasRoleInBand(new ArrayList<>())
+                .userGoTravel(new ArrayList<>())
+                .userHasClothes(new ArrayList<>())
+                .userHasInstruments(new ArrayList<>())
                 .build();
 
     }

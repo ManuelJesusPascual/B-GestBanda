@@ -36,8 +36,8 @@ public class BandsService  {
      * @return Banda coincidente con el id introducido por parámetros.
      */
 
-    public Bands getBandById(UUID id) throws GestBandaException {
-        return bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND));
+    public BandsResponse getBandById(UUID id) throws GestBandaException {
+        return BandsResponse.from(bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND)));
 
     }
 
@@ -60,11 +60,11 @@ public class BandsService  {
      * @return Banda actualizada
      */
 
-    public Bands updateBand(UUID id, Bands band) {
+    public BandsResponse updateBand(UUID id, Bands band) {
         Bands oldBand = bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND));
         oldBand.setUpdated_at(new Date());
         Bands updatedBand = bandsRepository.save(oldBand);
-        return updatedBand;
+        return BandsResponse.from(updatedBand);
     }
 
     /**
