@@ -1,6 +1,6 @@
 package com.mjpascual.gestbanda.services;
 
-import com.mjpascual.gestbanda.entities.Users;
+import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
 import com.mjpascual.gestbanda.entities.UsersInBand;
 import com.mjpascual.gestbanda.repositories.UsersBandRepository;
 import jakarta.transaction.Transactional;
@@ -21,9 +21,8 @@ public class UsersBandService {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public UsersInBand createUserInBand (UsersInBand userInBand){
-
-        return usersBandRepository.save(userInBand);
+    public UsersInBandResponse createUserInBand (UsersInBand userInBand){
+        return UsersInBandResponse.from(usersBandRepository.save(userInBand));
 
     }
 

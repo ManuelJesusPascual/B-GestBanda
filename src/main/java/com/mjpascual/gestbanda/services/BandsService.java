@@ -1,12 +1,10 @@
 package com.mjpascual.gestbanda.services;
 
+import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.BandsRepository;
-import com.mjpascual.gestbanda.repositories.UserRoleInBandRepository;
-import com.mjpascual.gestbanda.repositories.UsersBandRepository;
-import com.mjpascual.gestbanda.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,17 +23,10 @@ public class BandsService  {
      */
     private final BandsRepository bandsRepository;
 
-    private final UsersRepository usersRepository;
-
-    private final UserRoleInBandRepository userRoleInBandRepository;
-
-    private final UsersBandRepository usersInBandRepository;
     @Autowired
-    public BandsService(BandsRepository bandsRepository, UsersRepository usersRepository, UserRoleInBandRepository userRoleInBandRepository, UsersBandRepository usersInBandRepository) {
+    public BandsService(BandsRepository bandsRepository) {
         this.bandsRepository = bandsRepository;
-        this.usersRepository = usersRepository;
-        this.userRoleInBandRepository = userRoleInBandRepository;
-        this.usersInBandRepository = usersInBandRepository;
+
     }
 
     /**
@@ -45,8 +36,8 @@ public class BandsService  {
      * @return Banda coincidente con el id introducido por parámetros.
      */
 
-    public Bands getBandById(UUID id) throws GestBandaException {
-        return bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND));
+    public BandsResponse getBandById(UUID id) throws GestBandaException {
+        return BandsResponse.from(bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND)));
 
     }
 
@@ -56,9 +47,9 @@ public class BandsService  {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public Bands createBand (Bands band){
+    public BandsResponse createBand (Bands band){
 
-        return bandsRepository.save(band);
+        return BandsResponse.from(bandsRepository.save(band));
 
     }
 
@@ -69,11 +60,11 @@ public class BandsService  {
      * @return Banda actualizada
      */
 
-    public Bands updateBand(UUID id, Bands band) {
+    public BandsResponse updateBand(UUID id, Bands band) {
         Bands oldBand = bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND));
         oldBand.setUpdated_at(new Date());
         Bands updatedBand = bandsRepository.save(oldBand);
-        return updatedBand;
+        return BandsResponse.from(updatedBand);
     }
 
     /**

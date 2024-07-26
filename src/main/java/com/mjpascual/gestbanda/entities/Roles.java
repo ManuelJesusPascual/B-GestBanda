@@ -1,9 +1,11 @@
 package com.mjpascual.gestbanda.entities;
 
 
+import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,13 +30,23 @@ public class Roles {
     private String route;
 
     @Column(name = "updated_at")
-    private String updated_at;
+    private Date updated_at;
 
     @Column(name = "created_at")
-    private String created_at;
+    private Date created_at;
 
     @Transient
     private List<UserHasRoleInBand> userHasRoleInBand;
 
+    public static Roles from(RolesResponse rol) {
+        return Roles.builder()
+                .id(rol.getId())
+                .name(rol.getName())
+                .route(rol.getRoute())
+                .updated_at(rol.getUpdated_at())
+                .created_at(rol.getCreated_at())
+                .build();
+
+    }
 
 }

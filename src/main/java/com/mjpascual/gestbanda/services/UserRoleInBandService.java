@@ -1,7 +1,7 @@
 package com.mjpascual.gestbanda.services;
 
+import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
 import com.mjpascual.gestbanda.entities.UserHasRoleInBand;
-
 import com.mjpascual.gestbanda.repositories.UserRoleInBandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,8 @@ public class UserRoleInBandService {
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public UserHasRoleInBand createUserRoleInBand (UserHasRoleInBand userRoleInBand){
-
-        return userRoleInBandRepository.save(userRoleInBand);
+    public UserHasRoleInBandResponse createUserRoleInBand (UserHasRoleInBand userRoleInBand){
+        return UserHasRoleInBandResponse.from(userRoleInBandRepository.save(userRoleInBand));
 
     }
 

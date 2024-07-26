@@ -1,6 +1,7 @@
 package com.mjpascual.gestbanda.exceptions;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 @Getter

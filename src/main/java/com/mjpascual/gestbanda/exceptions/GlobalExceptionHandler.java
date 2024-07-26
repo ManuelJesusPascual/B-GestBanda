@@ -1,10 +1,6 @@
 package com.mjpascual.gestbanda.exceptions;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +11,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Clase que maneja las excepciones de la aplicación
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * @return ResponseEntity con los detalles de la excepción
    */
   @ExceptionHandler(GestBandaException.class)
-  public ResponseEntity<ErrorDetailed> handleResourceNotFoundException(
+  public ResponseEntity<ErrorDetailed> handleMainException(
           GestBandaException exception, WebRequest webRequest) {
     ErrorDetailed errorDetails =
         new ErrorDetailed(new Date(), exception, webRequest.getDescription(false),
@@ -63,6 +63,28 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     });
 
     return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+  }
+
+
+  /**
+   * Método que maneja las excepciones generales de la app
+   * @param exception Excepción lanzada por la aplicación
+   * @param webRequest Petición web
+   * @see GestBandaException Clase que define el mensaje de la excepción
+   * @see ErrorDetailed Clase que contiene los detalles de la excepción.
+   * @return ResponseEntity con los detalles de la excepción
+   */
+
+  //TODOSIR: He añadido esto porque cuando da un error por ejemplo en sql de que en la bbdd esta puesto not null y le envio un null por ejemplo
+  // No estaba controlado, pero el problema es que webRequest.getDescription da demasiados datos, hay que ver como controlo eso
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorDetailed> handleGeneralException(
+          Exception exception, WebRequest webRequest) {
+    ErrorDetailed errorDetails =
+            new ErrorDetailed(new Date(), exception, webRequest.getDescription(false),
+                    ErrorCodes.GENERIC_ERROR);
+
+    return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
 }
