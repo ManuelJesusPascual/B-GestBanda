@@ -16,11 +16,12 @@ public class RolesService {
 
     /**
      * Método que busca un rol por su nombre
+     *
      * @return Rol obtenido
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public RolesResponse searchRolByName (String name){
+    public RolesResponse searchRolByName(String name) {
         return RolesResponse.from(rolesRepository.findByName(name));
     }
 

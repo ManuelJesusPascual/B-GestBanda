@@ -27,7 +27,7 @@ public class UserGoTravel {
     @JoinColumn(name = "travel_id")
     private Travels travel_id;
 
-    @Column(name="user_go_on_bus")
+    @Column(name = "user_go_on_bus")
     private Boolean user_go_on_bus;
 
     @Column(name = "updated_at")

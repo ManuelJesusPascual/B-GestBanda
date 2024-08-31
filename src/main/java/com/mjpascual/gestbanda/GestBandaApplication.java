@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GestBandaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GestBandaApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(GestBandaApplication.class, args);
+    }
 
 }

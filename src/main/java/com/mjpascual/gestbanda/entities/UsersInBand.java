@@ -39,17 +39,17 @@ public class UsersInBand {
 
     public static UsersInBand from(UsersInBandResponse usersInBandResponse) {
 
-      return UsersInBand.builder()
-              .band_id(usersInBandResponse.getBand_id())
-              .user_id(usersInBandResponse.getUser_id())
-              .build();
+        return UsersInBand.builder()
+                .band_id(usersInBandResponse.getBand_id())
+                .user_id(usersInBandResponse.getUser_id())
+                .build();
 
     }
 
     public static List<UsersInBand> from(List<UsersInBandResponse> usersInBandResponse) {
 
         List<UsersInBand> usersInBandList = new ArrayList<>();
-        for(UsersInBandResponse iterator : usersInBandResponse) {
+        for (UsersInBandResponse iterator : usersInBandResponse) {
             usersInBandList.add(UsersInBand.from(iterator));
         }
 

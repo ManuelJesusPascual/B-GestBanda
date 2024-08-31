@@ -16,7 +16,7 @@ import java.util.UUID;
  * Clase que implementa los métodos de la interfaz BandsService
  */
 @Service
-public class BandsService  {
+public class BandsService {
 
     /**
      * Repositorio de la entidad Bands
@@ -31,9 +31,10 @@ public class BandsService  {
 
     /**
      * Método que devuelve una banda por su id
+     *
      * @param id ID de la banda a buscar
-     * @throws GestBandaException Excepción que se lanzará en caso de no encontrar la banda
      * @return Banda coincidente con el id introducido por parámetros.
+     * @throws GestBandaException Excepción que se lanzará en caso de no encontrar la banda
      */
 
     public BandsResponse getBandById(UUID id) throws GestBandaException {
@@ -43,11 +44,12 @@ public class BandsService  {
 
     /**
      * Método que crea una nueva banda
+     *
      * @return Banda creada
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public BandsResponse createBand (Bands band){
+    public BandsResponse createBand(Bands band) {
 
         return BandsResponse.from(bandsRepository.save(band));
 
@@ -55,7 +57,8 @@ public class BandsService  {
 
     /**
      * Método que actualiza una banda
-     * @param id ID de la banda a actualizar
+     *
+     * @param id   ID de la banda a actualizar
      * @param band Banda con los nuevos datos
      * @return Banda actualizada
      */
@@ -69,15 +72,15 @@ public class BandsService  {
 
     /**
      * Método que elimina una banda
+     *
      * @param id ID de la banda a eliminar
      */
 
-    public void deleteBand(UUID id){
-            bandsRepository.deleteById(id);
+    public void deleteBand(UUID id) {
+        bandsRepository.deleteById(id);
 
 
     }
-
 
 
 }

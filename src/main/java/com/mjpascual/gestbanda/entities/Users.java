@@ -42,7 +42,7 @@ public class Users {
     private Date created_at;
 
     @Transient
-    private  List<UsersInBand> usersInBand;
+    private List<UsersInBand> usersInBand;
 
     @Transient
     private List<UserHasRoleInBand> userHasRoleInBand;

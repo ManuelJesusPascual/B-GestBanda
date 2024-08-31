@@ -17,11 +17,12 @@ public class UsersBandService {
 
     /**
      * Método que crea una nueva tupla en la relación UsersBands
+     *
      * @return Tupla creada
      */
 
     @Transactional(rollbackOn = Exception.class)
-    public UsersInBandResponse createUserInBand (UsersInBand userInBand){
+    public UsersInBandResponse createUserInBand(UsersInBand userInBand) {
         return UsersInBandResponse.from(usersBandRepository.save(userInBand));
 
     }

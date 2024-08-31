@@ -1,10 +1,7 @@
 package com.mjpascual.gestbanda.entities;
 
-import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.dto.userHasRoleInBand.CreateUserHasRoleInBandRequest;
 import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
-import com.mjpascual.gestbanda.dto.users.UsersResponse;
-import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -69,7 +66,7 @@ public class UserHasRoleInBand {
     public static List<UserHasRoleInBand> from(List<UserHasRoleInBandResponse> userHasRoleInBandResponse) {
 
         List<UserHasRoleInBand> userHasRoleInBandList = new ArrayList<>();
-        for(UserHasRoleInBandResponse iterator : userHasRoleInBandResponse) {
+        for (UserHasRoleInBandResponse iterator : userHasRoleInBandResponse) {
             userHasRoleInBandList.add(UserHasRoleInBand.from(iterator));
         }
 

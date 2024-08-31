@@ -2,7 +2,10 @@ package com.mjpascual.gestbanda.dto.users;
 
 import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
 import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
-import com.mjpascual.gestbanda.entities.*;
+import com.mjpascual.gestbanda.entities.UserGoTravel;
+import com.mjpascual.gestbanda.entities.UserHasClothes;
+import com.mjpascual.gestbanda.entities.UserHasInstruments;
+import com.mjpascual.gestbanda.entities.Users;
 import lombok.*;
 
 import java.util.List;
