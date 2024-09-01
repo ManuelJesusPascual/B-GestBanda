@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface RolesRepository extends JpaRepository<Roles, UUID> {
 
-    @Query(value = "SELECT * FROM roles WHERE name = ?1" , nativeQuery = true)
+    @Query(value = "SELECT * FROM roles WHERE name = ?1", nativeQuery = true)
     public Roles findByName(String name);
 
 }

@@ -36,16 +36,17 @@ public class Travels {
     @Column(name = "hourplace")
     private Date hourplace;
 
-    @Column(name="latitude")
+    @Column(name = "latitude")
     private Double latitude;
 
-    @Column(name="longitude")
+    @Column(name = "longitude")
     private Double longitude;
 
-    @Column(name="bus_offer")
+    @Column(name = "bus_offer")
     private Boolean bus_offer;
 
-    @JoinColumn(name="band_id") @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "band_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Bands band_id;
 
     @Column(name = "updated_at")

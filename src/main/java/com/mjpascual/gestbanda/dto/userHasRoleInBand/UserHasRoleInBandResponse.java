@@ -1,12 +1,9 @@
 package com.mjpascual.gestbanda.dto.userHasRoleInBand;
 
-import com.mjpascual.gestbanda.dto.bands.BandsResponse;
-import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.entities.Roles;
 import com.mjpascual.gestbanda.entities.UserHasRoleInBand;
 import com.mjpascual.gestbanda.entities.Users;
-
 import lombok.*;
 
 import java.util.ArrayList;
@@ -35,11 +32,13 @@ public class UserHasRoleInBandResponse {
                 .band_id(userHasRoleInBand.getBand_id())
                 .build();
 
-    };
+    }
+
+    ;
 
     public static List<UserHasRoleInBandResponse> from(List<UserHasRoleInBand> userHasRoleInBand) {
         List<UserHasRoleInBandResponse> userHasRoleInBandResponseList = new ArrayList<>();
-        for(UserHasRoleInBand iterator : userHasRoleInBand){
+        for (UserHasRoleInBand iterator : userHasRoleInBand) {
             userHasRoleInBandResponseList.add(UserHasRoleInBandResponse.from(iterator));
         }
         return userHasRoleInBandResponseList;

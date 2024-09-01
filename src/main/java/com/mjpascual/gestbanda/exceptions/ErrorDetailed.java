@@ -9,7 +9,7 @@ import java.util.Date;
 
 
 /**
- * DTO para los detalles de las excepciones
+ * DTO para los detalles de las excepciones. Será el DTO que devolveremos al usuario.
  */
 @Getter
 @Setter
@@ -18,9 +18,8 @@ import java.util.Date;
 public class ErrorDetailed {
 
     private Date timeMark;
-    private Exception error;
     private String message;
-    private ErrorCodes code;
+    private int code;
 
 
 }

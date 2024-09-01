@@ -2,7 +2,6 @@ package com.mjpascual.gestbanda.dto.userHasRoleInBand;
 
 import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.entities.Bands;
-import com.mjpascual.gestbanda.entities.Roles;
 import com.mjpascual.gestbanda.entities.Users;
 import lombok.*;
 
