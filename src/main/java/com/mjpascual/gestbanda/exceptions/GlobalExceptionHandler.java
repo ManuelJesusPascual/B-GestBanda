@@ -26,6 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Método que maneja las excepciones de la app (GestBandaException)
+     *
      * @param exception  Excepción lanzada por la aplicación
      * @param webRequest Petición web
      * @return ResponseEntity con los detalles de la excepción
@@ -44,6 +45,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Método que maneja la excepción de validación de argumentos
+     *
      * @param ex      Excepción lanzada por la aplicación (throw new MethodArgumentNotValidException)
      * @param headers Cabeceras de la petición
      * @param status  Estado de la petición
@@ -69,6 +71,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Método que maneja las excepciones generales de la app(Exception)
+     *
      * @param exception  Excepción lanzada por la aplicación
      * @param webRequest Petición web
      * @return ResponseEntity con los detalles de la excepción

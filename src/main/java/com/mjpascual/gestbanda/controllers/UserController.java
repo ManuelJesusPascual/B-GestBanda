@@ -25,6 +25,7 @@ public class UserController {
     /**
      * Endpoint que se encargará de llamar a la validación del DTO para veríficar que el usuario que nos ha llegado
      * es válido y posteriormente llamará al servicio para insertar el usuario en la BBDD.
+     *
      * @param createUserRequest Usuario a registrar.
      * @return Usuario insertado en la BBDD
      */

@@ -7,6 +7,7 @@ import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,15 +21,18 @@ import static java.util.Objects.isNull;
 public class UsersService {
 
     private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
      * Método que crea un nuevo usuario.
      * Primero se llamará al método validateCreateUser() para verificar si este usuario ya existe en la BBDD.
      * Si no existe, se llamará a la BBDD para crear el usuario, si existe, el propio método validateCreateUser(), lanzará la excepción.
+     * Antes de crear el usuario, inserta la fecha de creación y codifica su contraseña.
      * @return Usuario creado
      */
     @Transactional(rollbackOn = Exception.class)
@@ -39,6 +43,7 @@ public class UsersService {
 
         Users userRegister = Users.from(user);
         userRegister.setCreated_at(new Date());
+        userRegister.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return UsersResponse.from(usersRepository.save(userRegister));
 
@@ -49,6 +54,7 @@ public class UsersService {
      * Método que validará si el usuario ya existe en la BBDD, realizará las peticiones a la misma vez a la BBDD
      * Tras eso, si las peticiones devuelven resultados, lanzará una excepción de que el usuario ya existe.
      * De lo contrario, continuará con el proceso.
+     *
      * @param user Usuario a crear
      */
     private void validateCreateUser(CreateUserRequest user) {
