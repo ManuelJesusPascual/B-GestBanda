@@ -3,12 +3,15 @@ package com.mjpascual.gestbanda.controllers;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.services.UsersService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.mjpascual.gestbanda.config.Security.TokenUtils.createToken;
 
 /**
  * Controlador de la entidad Users
@@ -37,6 +40,13 @@ public class UserController {
 
         response = usersService.createUser(createUserRequest);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        /**
+         * Insertar token en los headers
+         */
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + createToken(response.getEmail()));
+
+
+        return new ResponseEntity<>(response,headers, HttpStatus.CREATED);
     }
 }
