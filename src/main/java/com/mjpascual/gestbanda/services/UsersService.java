@@ -73,7 +73,7 @@ public class UsersService {
             }
 
             if (!isNull(userAlreadyExistsByPhone)) {
-                throw new GestBandaException(new Exception(), "Se ha intentado registrar un usuario con un teléfono ya existente", ErrorCodes.PHONE_ALREADY_EXISTS);
+                throw new GestBandaException(new Exception(), "Se ha intentado registrar un usuario con un telefono ya existente", ErrorCodes.PHONE_ALREADY_EXISTS);
             }
 
         } catch (InterruptedException | ExecutionException e) {
