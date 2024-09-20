@@ -9,6 +9,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,8 +40,11 @@ public class UserHasRoleInBandResponse {
 
     public static List<UserHasRoleInBandResponse> from(List<UserHasRoleInBand> userHasRoleInBand) {
         List<UserHasRoleInBandResponse> userHasRoleInBandResponseList = new ArrayList<>();
-        for (UserHasRoleInBand iterator : userHasRoleInBand) {
-            userHasRoleInBandResponseList.add(UserHasRoleInBandResponse.from(iterator));
+        if(!isNull(userHasRoleInBand) && !userHasRoleInBand.isEmpty()) {
+
+            for (UserHasRoleInBand iterator : userHasRoleInBand) {
+                userHasRoleInBandResponseList.add(UserHasRoleInBandResponse.from(iterator));
+            }
         }
         return userHasRoleInBandResponseList;
     }

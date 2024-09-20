@@ -1,10 +1,16 @@
 package com.mjpascual.gestbanda.config.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mjpascual.gestbanda.dto.users.UsersResponse;
+import com.mjpascual.gestbanda.exceptions.ErrorCodes;
+import com.mjpascual.gestbanda.exceptions.ErrorDetailed;
+import com.mjpascual.gestbanda.exceptions.GestBandaException;
+import com.mjpascual.gestbanda.services.UsersService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,12 +18,21 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.TimeZone;
 
 /**
  * Filtro que autorizará al usuario a usar los endpoints
  */
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private final UsersService usersService;
+
+    // Constructor para inyectar el UsersService
+    public JWTAuthenticationFilter(UsersService usersService) {
+        this.usersService = usersService;
+    }
 
     /**
      * Método que creará un UsernamePasswordAuthenticationToken y con este comprobará si el usuario se corresponde con la BBDD
@@ -33,7 +48,24 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             authCredentials = new ObjectMapper().readValue(request.getReader(), AuthCredentials.class);
 
         } catch (IOException e) {
+            ErrorDetailed errorDetails =
+                    new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), "Error al leer los datos de inicio de sesión",
+                            ErrorCodes.READ_ERROR.getCode());
 
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                response.getWriter().write(mapper.writeValueAsString(errorDetails));
+                response.getWriter().flush();
+
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+            return null;
         }
 
         UsernamePasswordAuthenticationToken usernamePAT = new UsernamePasswordAuthenticationToken(authCredentials.getEmail(), authCredentials.getPassword(), Collections.emptyList());
@@ -42,7 +74,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     /**
-     * Método que se lanzará en caso de que la autenticación haya sido satisfactoria. Este método añadirá el token del usuario por parámetros.
+     * Método que se lanzará en caso de que la autenticación haya sido satisfactoria. Este método añadirá el token del usuario por cabeceras.
+     * También mandará la información del usuario.
      * @param request Petición HTTP
      * @param response Respuesta HTTP
      * @param chain Cadena de filtros
@@ -55,10 +88,38 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = TokenUtils.createToken(userDetails.getUsername());
 
+        UsersResponse user = usersService.getLoginInfo(userDetails.getUsername());
+
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ObjectMapper mapper = new ObjectMapper();
+        response.getWriter().write(mapper.writeValueAsString(user));
+
+
         response.getWriter().flush();
+
 
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        ErrorDetailed errorDetails =
+                new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), "Las credenciales no son válidas",
+                        ErrorCodes.USER_NOT_FOUND.getCode());
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        ObjectMapper mapper = new ObjectMapper();
+        response.getWriter().write(mapper.writeValueAsString(errorDetails));
+
+
+        response.getWriter().flush();
+
+    }
 }

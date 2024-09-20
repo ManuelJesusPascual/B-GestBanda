@@ -7,6 +7,7 @@ import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.UsersRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,9 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
-        this.usersRepository = usersRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) { //Se añade el Lazy porque PasswordEncoder es del security.
+        this.usersRepository = usersRepository;                                                   //Al security le hace falta usersService para obtener la informacion tras un login de un usuario
+        this.passwordEncoder = passwordEncoder;                                                   //Y al UsersService le hace falta el security para usar el passwordencoder, entonces se hace que se injecte mas tarde.
     }
 
     /**
@@ -80,5 +81,18 @@ public class UsersService {
             throw new GestBandaException(new Exception(), "Error al validar el usuario", ErrorCodes.GENERIC_ERROR);
         }
     }
+
+    /**
+     * Método que obtendrá la información de un usuario para loguearlo.
+     * @param mail Email del usuario a obtener
+     * @return Información del usuario.
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public UsersResponse getLoginInfo(String mail) {
+
+        Users user = usersRepository.findByEmail(mail);
+
+        return UsersResponse.from(user);
+    };
 
 }

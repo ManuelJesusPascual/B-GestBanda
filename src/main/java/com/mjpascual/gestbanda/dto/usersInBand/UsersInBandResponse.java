@@ -9,6 +9,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.isNull;
 
 @Getter
 @Setter
@@ -34,9 +35,12 @@ public class UsersInBandResponse {
     }
 
     public static List<UsersInBandResponse> from(List<UsersInBand> usersInBand) {
+
         List<UsersInBandResponse> usersInBandResponseList = new ArrayList<>();
-        for (UsersInBand iterator : usersInBand) {
-            usersInBandResponseList.add(UsersInBandResponse.from(iterator));
+        if(!isNull(usersInBand) && !usersInBand.isEmpty()){
+            for (UsersInBand iterator : usersInBand) {
+                usersInBandResponseList.add(UsersInBandResponse.from(iterator));
+            }
         }
         return usersInBandResponseList;
     }

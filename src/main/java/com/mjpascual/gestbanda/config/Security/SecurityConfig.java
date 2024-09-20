@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.config.Security;
 
+import com.mjpascual.gestbanda.services.UsersService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailService;
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
-
+    private final UsersService usersService;
 
     /**
      * En cuanto llega una petición HTTP lo primero que debe pasar es por los distintos filtros definidos en nuestra
@@ -40,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authManager, JWTAuthorizationFilter jWTAuthorizationFilter) throws Exception {
 
-        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService);
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/api/users/login");
 

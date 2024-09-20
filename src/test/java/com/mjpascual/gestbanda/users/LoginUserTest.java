@@ -5,6 +5,7 @@ import com.mjpascual.gestbanda.config.Security.AuthCredentials;
 import com.mjpascual.gestbanda.config.Security.JWTAuthenticationFilter;
 import com.mjpascual.gestbanda.config.Security.UserDetailsImpl;
 import com.mjpascual.gestbanda.entities.Users;
+import com.mjpascual.gestbanda.services.UsersService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,6 +36,10 @@ class LoginUserTest {
     @Mock
     private AuthenticationManager authenticationManager;
 
+    // Mock del UsersService que usará el filtro
+    @Mock
+    private UsersService usersService;
+
     /**
      * Método de configuración que se ejecuta antes de cada prueba
      * Inicializa los mocks y crea una nueva instancia del filtro
@@ -44,7 +49,7 @@ class LoginUserTest {
         // Inicializa los mocks anotados en esta clase
         MockitoAnnotations.openMocks(this);
         // Crea una nueva instancia del filtro
-        jwtAuthenticationFilter = new JWTAuthenticationFilter();
+        jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService);
         // Establece el AuthenticationManager mock en el filtro
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
     }
