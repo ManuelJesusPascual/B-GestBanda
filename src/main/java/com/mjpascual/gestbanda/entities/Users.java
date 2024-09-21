@@ -61,7 +61,7 @@ public class Users {
         return Users.builder()
                 .id(userDTO.getId())
                 .name(userDTO.getName())
-                .email(userDTO.getEmail())
+                .email(userDTO.getEmail().toLowerCase())
                 .phone(userDTO.getPhone())
                 .usersInBand(UsersInBand.from(userDTO.getUsersInBandResponse()))
                 .userHasRoleInBand(UserHasRoleInBand.from(userDTO.getUserHasRoleInBandResponse()))
@@ -75,7 +75,7 @@ public class Users {
     public static Users from(CreateUserRequest createUserRequest) {
         return Users.builder()
                 .name(createUserRequest.getName())
-                .email(createUserRequest.getEmail())
+                .email(createUserRequest.getEmail().toLowerCase())
                 .password(createUserRequest.getPassword()) //TODO: Encriptar esto
                 .phone(createUserRequest.getPhone())
                 .usersInBand(new ArrayList<>())
