@@ -60,8 +60,8 @@ public class UsersService {
      */
     private void validateCreateUser(CreateUserRequest user) {
         try {
-            CompletableFuture<Users> emailValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByEmail(user.getEmail()));
-            CompletableFuture<Users> phoneValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByPhone(user.getPhone()));
+            CompletableFuture<Users> emailValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByEmail(user.getEmail().toLowerCase()));
+            CompletableFuture<Users> phoneValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByPhone(user.getPhone().toLowerCase()));
 
             CompletableFuture<Void> allValidations = CompletableFuture.allOf(emailValidationFuture, phoneValidationFuture);
             allValidations.join(); //Espera a que se hayan obtenido ambos usuarios

@@ -6,6 +6,7 @@ import com.mjpascual.gestbanda.config.Security.JWTAuthenticationFilter;
 import com.mjpascual.gestbanda.config.Security.UserDetailsImpl;
 import com.mjpascual.gestbanda.entities.Users;
 import com.mjpascual.gestbanda.services.UsersService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -128,27 +129,23 @@ class LoginUserTest {
      * Verifica que se intenta autenticar con credenciales nulas y se lanza una excepción
      */
     @Test
-    void attemptAuthentication_InvalidJson_AttemptsAuthenticationWithNullCredentials() throws IOException {
+    void attemptAuthentication_InvalidJson_ReturnsUnauthorizedResponse() throws IOException {
         // Preparación
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         // Establece un JSON inválido como contenido de la petición
         request.setContent("invalid json".getBytes());
 
-        // Configura el mock para que lance una excepción al autenticar
-        when(authenticationManager.authenticate(any())).thenThrow(new AuthenticationException("Invalid credentials") {});
+        // Ejecución
+        jwtAuthenticationFilter.attemptAuthentication(request, response);
 
-        // Ejecución y Verificación
-        // Comprueba que se lanza una AuthenticationException al intentar autenticar
-        assertThrows(AuthenticationException.class, () -> {
-            jwtAuthenticationFilter.attemptAuthentication(request, response);
-        });
+        // Verificación: se espera que la respuesta sea SC_UNAUTHORIZED
+        assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 
-        // Verifica que se llamó a authenticate con un token que tiene credenciales nulas
-        verify(authenticationManager).authenticate(argThat(auth ->
-                auth instanceof UsernamePasswordAuthenticationToken
-                        && auth.getPrincipal() == null
-                        && auth.getCredentials() == null
-        ));
+        // Verifica que la respuesta contenga el contenido esperado
+        String expectedErrorMessage = "Error al leer los datos de inicio de sesión";
+        String responseBody = response.getContentAsString();
+        assertTrue(responseBody.contains(expectedErrorMessage));
     }
+
 }
