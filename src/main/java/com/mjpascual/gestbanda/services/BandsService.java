@@ -13,56 +13,49 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Clase que implementa los métodos de la interfaz BandsService
+ * Class that implements the methods of the BandsService interface.
  */
 @Service
 public class BandsService {
 
     /**
-     * Repositorio de la entidad Bands
+     * Repository for the Bands entity.
      */
     private final BandsRepository bandsRepository;
 
     @Autowired
     public BandsService(BandsRepository bandsRepository) {
         this.bandsRepository = bandsRepository;
-
     }
 
     /**
-     * Método que devuelve una banda por su id
+     * Method that returns a band by its ID.
      *
-     * @param id ID de la banda a buscar
-     * @return Banda coincidente con el id introducido por parámetros.
-     * @throws GestBandaException Excepción que se lanzará en caso de no encontrar la banda
+     * @param id ID of the band to search for.
+     * @return Band matching the provided ID.
+     * @throws GestBandaException Exception thrown if the band is not found.
      */
-
     public BandsResponse getBandById(UUID id) throws GestBandaException {
         return BandsResponse.from(bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND)));
-
     }
 
     /**
-     * Método que crea una nueva banda
+     * Method that creates a new band.
      *
-     * @return Banda creada
+     * @return Created band.
      */
-
     @Transactional(rollbackOn = Exception.class)
     public BandsResponse createBand(Bands band) {
-
         return BandsResponse.from(bandsRepository.save(band));
-
     }
 
     /**
-     * Método que actualiza una banda
+     * Method that updates a band.
      *
-     * @param id   ID de la banda a actualizar
-     * @param band Banda con los nuevos datos
-     * @return Banda actualizada
+     * @param id   ID of the band to update.
+     * @param band Band with the new data.
+     * @return Updated band.
      */
-
     public BandsResponse updateBand(UUID id, Bands band) {
         Bands oldBand = bandsRepository.findById(id).orElseThrow(() -> GestBandaException.from(ErrorCodes.BAND_NOT_FOUND));
         oldBand.setUpdated_at(new Date());
@@ -71,16 +64,11 @@ public class BandsService {
     }
 
     /**
-     * Método que elimina una banda
+     * Method that deletes a band.
      *
-     * @param id ID de la banda a eliminar
+     * @param id ID of the band to delete.
      */
-
     public void deleteBand(UUID id) {
         bandsRepository.deleteById(id);
-
-
     }
-
-
 }

@@ -7,9 +7,8 @@ import lombok.Setter;
 
 import java.util.Date;
 
-
 /**
- * DTO para los detalles de las excepciones. Será el DTO que devolveremos al usuario.
+ * DTO for exception details. This will be the DTO returned to the user.
  */
 @Getter
 @Setter
@@ -20,6 +19,5 @@ public class ErrorDetailed {
     private Date timeMark;
     private String message;
     private int code;
-
 
 }

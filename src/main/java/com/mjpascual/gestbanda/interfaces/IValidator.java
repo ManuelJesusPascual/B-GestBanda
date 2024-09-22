@@ -1,27 +1,27 @@
 package com.mjpascual.gestbanda.interfaces;
 
 /**
- * Interfaz que obligará a los DTO a tener un trimFields y un valid
+ * Interface that enforces DTOs to have trimFields and validate methods.
  */
 public interface IValidator {
 
     /**
-     * Método que comprobará si los valores obligatorios no son null.
+     * Method that checks if required values are not null.
      */
     void verifyNulls();
 
     /**
-     * Método que quitará los espacios al principio y al final de los atributos
+     * Method that removes leading and trailing spaces from the attributes.
      */
     void trimFields();
 
     /**
-     * Método que validará los distintos atributos del DTO, en caso de que alguno no sea válido lanzará una excepcion
+     * Method that validates the different attributes of the DTO; if any are invalid, it will throw an exception.
      */
     void validateFields();
 
     /**
-     * Método que llamaremos desde el controlador y será el engargado de llamar a trimFields() y a validateFields()
+     * Method that will be called from the controller and will be responsible for calling trimFields() and validateFields().
      */
     void validate();
 }

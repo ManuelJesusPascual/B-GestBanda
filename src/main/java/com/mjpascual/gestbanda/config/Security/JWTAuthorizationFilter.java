@@ -16,7 +16,7 @@ import static java.util.Objects.isNull;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Filtro que verificará si el token que envía el usuario es válido o no. Si es válido obtendrá la autenticación de este.
+ * Filter that will verify if the token sent by the user is valid or not. If valid, it will retrieve the authentication.
  */
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
@@ -36,9 +36,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Método que obtendrá el token de la petición
-     * @param request Petición HTTP
-     * @return Si existe un token lo devolverá, en caso de no existir, devolverá null.
+     * Method that will retrieve the token from the request
+     * @param request HTTP request
+     * @return If a token exists, it will return it. If not, it will return null.
      */
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);

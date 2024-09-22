@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * Enum con los códigos y descripciones de las excepciones lanzadas por el backend
+ * Enum with the codes and descriptions of the exceptions thrown by the backend
  */
 @AllArgsConstructor
 @Getter
@@ -18,8 +18,6 @@ public enum ErrorCodes {
     EMAIL_ALREADY_EXISTS(5, "EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT),
     PHONE_ALREADY_EXISTS(6, "PHONE_ALREADY_EXISTS", HttpStatus.BAD_REQUEST),
     READ_ERROR(7, "READ_ERROR", HttpStatus.BAD_REQUEST);
-
-
 
     private final int code;
     private final String message;
