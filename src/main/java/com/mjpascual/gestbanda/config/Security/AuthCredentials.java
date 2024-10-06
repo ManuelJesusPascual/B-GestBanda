@@ -3,7 +3,7 @@ package com.mjpascual.gestbanda.config.Security;
 import lombok.Data;
 
 /**
- * Credenciales con las que el usuario se logueará para obtener un token y tener acceso a los endpoints
+ * Credentials that the user will use to log in and obtain a token to access the endpoints
  */
 @Data
 public class AuthCredentials {

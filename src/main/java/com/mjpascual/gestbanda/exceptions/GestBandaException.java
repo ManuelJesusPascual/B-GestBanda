@@ -7,7 +7,7 @@ import lombok.Setter;
 
 
 /**
- * Excepción genérica para la aplicación
+ * Generic exception for the application
  */
 @Getter
 @Setter
@@ -15,12 +15,11 @@ import lombok.Setter;
 @Builder
 public class GestBandaException extends RuntimeException {
 
-
     private static final long serialVersionUID = 1L;
 
-    private Exception error; // Error Exception (Generalmente siempre lanzaremos Exception())
-    private String message; // Mensaje descriptivo de la excepcion
-    private ErrorCodes code; //Numero propio error personalizado, @see ErrorCodes
+    private Exception error; // Exception error (Generally, we will always throw Exception())
+    private String message; // Descriptive message of the exception
+    private ErrorCodes code; // Custom error code, @see ErrorCodes
 
     public GestBandaException(Exception error, String message, ErrorCodes code) {
         super(message);
@@ -56,6 +55,4 @@ public class GestBandaException extends RuntimeException {
                 .build();
     }
 
-
 }
-

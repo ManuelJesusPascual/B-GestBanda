@@ -25,18 +25,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
 
-
     private final UserDetailsService userDetailService;
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
     private final UsersService usersService;
 
     /**
-     * En cuanto llega una petición HTTP lo primero que debe pasar es por los distintos filtros definidos en nuestra
-     * configuración de seguridad. En este método se definen esos filtros.
-     * @see JWTAuthenticationFilter Filtro de autenticación
-     * @see JWTAuthorizationFilter Filtro de autorización
-     * @param httpSecurity Es un objeto que se le pasa a todos los filtros, y estos filtros trabajan con él y lo modifican.
-     * @throws Exception Excepción lanzada por el método .build() si hay algún problema al construir la cadena de filtros.
+     * When an HTTP request arrives, the first thing it must pass through is the various filters defined in our
+     * security configuration. This method defines those filters.
+     * @see JWTAuthenticationFilter Authentication filter
+     * @see JWTAuthorizationFilter Authorization filter
+     * @param httpSecurity An object passed to all the filters, which work with it and modify it.
+     * @throws Exception Exception thrown by the .build() method if there is a problem building the filter chain.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authManager, JWTAuthorizationFilter jWTAuthorizationFilter) throws Exception {
@@ -59,11 +58,11 @@ public class SecurityConfig {
     }
 
     /**
-     * Este método define un AuthenticationManager, que es el componente encargado de gestionar la autenticación
-     * en la aplicación. Se obtiene a partir de la configuración de autenticación proporcionada.
+     * This method defines an AuthenticationManager, which is the component responsible for managing authentication
+     * in the application. It is obtained from the provided authentication configuration.
      *
-     * @param authenticationConfiguration Configuración utilizada para obtener el AuthenticationManager.
-     * @return AuthenticationManager El administrador de autenticación configurado.
+     * @param authenticationConfiguration Configuration used to obtain the AuthenticationManager.
+     * @return AuthenticationManager The configured authentication manager.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -71,11 +70,11 @@ public class SecurityConfig {
     }
 
     /**
-     * Define un AuthenticationProvider, que es el encargado de realizar la autenticación específica de usuarios.
-     * En este caso, se utiliza un DaoAuthenticationProvider que requiere un codificador de contraseñas y un servicio
-     * para cargar los detalles del usuario.
+     * Defines an AuthenticationProvider, responsible for performing user-specific authentication.
+     * In this case, a DaoAuthenticationProvider is used, which requires a password encoder and a service
+     * to load user details.
      *
-     * @return AuthenticationProvider El proveedor de autenticación configurado.
+     * @return AuthenticationProvider The configured authentication provider.
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -85,12 +84,11 @@ public class SecurityConfig {
         return provider;
     }
 
-
     /**
-     * Este método define un codificador de contraseñas (PasswordEncoder) utilizando BCrypt, que es un algoritmo de
-     * hash seguro para almacenar contraseñas.
+     * This method defines a password encoder (PasswordEncoder) using BCrypt, a secure hashing algorithm for
+     * storing passwords.
      *
-     * @return PasswordEncoder El codificador de contraseñas configurado.
+     * @return PasswordEncoder The configured password encoder.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -1,13 +1,11 @@
 package com.mjpascual.gestbanda.dto.users;
 
-
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.interfaces.IValidator;
 import lombok.*;
 
 import static java.util.Objects.isNull;
-
 
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class CreateUserRequest implements IValidator {
     private String password;
 
     /**
-     * Método que comprobará que los valores obligatorios no son null
+     * Method that checks that the required values are not null
      */
     @Override
     public void verifyNulls() {
@@ -42,7 +40,7 @@ public class CreateUserRequest implements IValidator {
     }
 
     /**
-     * Método que elimina los espacios al principio y al final de los distintos atributos.
+     * Method that trims spaces at the beginning and end of the various attributes.
      */
     @Override
     public void trimFields() {
@@ -52,9 +50,9 @@ public class CreateUserRequest implements IValidator {
     }
 
     /**
-     * Método que valida los atributos comprobandolos contra un regex
+     * Method that validates the attributes against a regex.
      *
-     * @return true si es válido, false si no es válido.
+     * @return true if valid, false if not valid.
      */
     @Override
     public void validateFields() {
@@ -74,11 +72,10 @@ public class CreateUserRequest implements IValidator {
         if (!password.matches(passwordRegex)) {
             throw new GestBandaException(new Exception(), "La contraseña introducida no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
         }
-
     }
 
     /**
-     * Método encargado de llamar a las distintas validaciones
+     * Method responsible for calling the various validations.
      */
     @Override
     public void validate() {

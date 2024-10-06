@@ -16,16 +16,12 @@ public class UserRoleInBandService {
     }
 
     /**
-     * Método que crea una nueva tupla en la relacion de userRoleInBand
+     * Method that creates a new tuple in the userRoleInBand relationship.
      *
-     * @return UserRoleInBands creado
+     * @return Created UserRoleInBand.
      */
-
     @Transactional(rollbackOn = Exception.class)
     public UserHasRoleInBandResponse createUserRoleInBand(UserHasRoleInBand userRoleInBand) {
         return UserHasRoleInBandResponse.from(userRoleInBandRepository.save(userRoleInBand));
-
     }
-
-
 }

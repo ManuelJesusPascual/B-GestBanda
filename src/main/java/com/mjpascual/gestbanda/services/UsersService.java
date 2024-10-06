@@ -17,46 +17,43 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.Objects.isNull;
 
-
 @Service
 public class UsersService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) { //Se añade el Lazy porque PasswordEncoder es del security.
-        this.usersRepository = usersRepository;                                                   //Al security le hace falta usersService para obtener la informacion tras un login de un usuario
-        this.passwordEncoder = passwordEncoder;                                                   //Y al UsersService le hace falta el security para usar el passwordencoder, entonces se hace que se injecte mas tarde.
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) { // The Lazy is added because PasswordEncoder is part of the security configuration.
+        this.usersRepository = usersRepository;                                                  // The security layer needs UsersService to get information after a user logs in.
+        this.passwordEncoder = passwordEncoder;                                                   // And UsersService needs the security layer to use the password encoder, so it is injected later.
+
     }
 
     /**
-     * Método que crea un nuevo usuario.
-     * Primero se llamará al método validateCreateUser() para verificar si este usuario ya existe en la BBDD.
-     * Si no existe, se llamará a la BBDD para crear el usuario, si existe, el propio método validateCreateUser(), lanzará la excepción.
-     * Antes de crear el usuario, inserta la fecha de creación y codifica su contraseña.
-     * @return Usuario creado
+     * Method that creates a new user.
+     * First, it will call the method validateCreateUser() to check if this user already exists in the database.
+     * If it does not exist, it will call the database to create the user; if it exists, the validateCreateUser() method will throw an exception.
+     * Before creating the user, it sets the creation date and encodes the password.
+     * @return Created user.
      */
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse createUser(CreateUserRequest user) {
-
         validateCreateUser(user);
-
 
         Users userRegister = Users.from(user);
         userRegister.setCreated_at(new Date());
         userRegister.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return UsersResponse.from(usersRepository.save(userRegister));
-
-
     }
 
     /**
-     * Método que validará si el usuario ya existe en la BBDD, realizará las peticiones a la misma vez a la BBDD
-     * Tras eso, si las peticiones devuelven resultados, lanzará una excepción de que el usuario ya existe.
-     * De lo contrario, continuará con el proceso.
+     * Method that validates if the user already exists in the database.
+     * It performs requests to the database simultaneously.
+     * If the requests return results, it throws an exception indicating that the user already exists.
+     * Otherwise, it continues with the process.
      *
-     * @param user Usuario a crear
+     * @param user User to create.
      */
     private void validateCreateUser(CreateUserRequest user) {
         try {
@@ -64,8 +61,7 @@ public class UsersService {
             CompletableFuture<Users> phoneValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByPhone(user.getPhone().toLowerCase()));
 
             CompletableFuture<Void> allValidations = CompletableFuture.allOf(emailValidationFuture, phoneValidationFuture);
-            allValidations.join(); //Espera a que se hayan obtenido ambos usuarios
-
+            allValidations.join(); // Wait for both users to be fetched.
 
             Users userAlreadyExistsByEmail = emailValidationFuture.get();
             Users userAlreadyExistsByPhone = phoneValidationFuture.get();
@@ -83,16 +79,13 @@ public class UsersService {
     }
 
     /**
-     * Método que obtendrá la información de un usuario para loguearlo.
-     * @param mail Email del usuario a obtener
-     * @return Información del usuario.
+     * Method that retrieves the information of a user for login.
+     * @param mail Email of the user to retrieve.
+     * @return User information.
      */
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse getLoginInfo(String mail) {
-
         Users user = usersRepository.findByEmail(mail);
-
         return UsersResponse.from(user);
-    };
-
+    }
 }

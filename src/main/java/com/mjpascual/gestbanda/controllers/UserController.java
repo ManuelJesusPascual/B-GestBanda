@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.mjpascual.gestbanda.config.Security.TokenUtils.createToken;
 
 /**
- * Controlador de la entidad Users
+ * Controller for the Users entity
  */
 @RestController
 @RequestMapping("/api/users")
@@ -26,11 +26,11 @@ public class UserController {
     }
 
     /**
-     * Endpoint que se encargará de llamar a la validación del DTO para veríficar que el usuario que nos ha llegado
-     * es válido y posteriormente llamará al servicio para insertar el usuario en la BBDD.
+     * Endpoint responsible for validating the DTO to verify that the received user is valid,
+     * and then calling the service to insert the user into the database.
      *
-     * @param createUserRequest Usuario a registrar.
-     * @return Usuario insertado en la BBDD
+     * @param createUserRequest User to be registered.
+     * @return The user inserted into the database.
      */
     @PostMapping("/registerUser")
     public ResponseEntity<UsersResponse> registerUser(@RequestBody CreateUserRequest createUserRequest) {
@@ -41,12 +41,11 @@ public class UserController {
         response = usersService.createUser(createUserRequest);
 
         /**
-         * Insertar token en los headers
+         * Insert token into headers
          */
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + createToken(response.getEmail()));
 
-
-        return new ResponseEntity<>(response,headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
 }

@@ -19,8 +19,8 @@ public class UserDetailServiceIMPL implements UserDetailsService {
     }
 
     /**
-     * Método encargado de buscar si el email incluido en el token corresponde a algun usuario.
-     * @param email Email incluido en el token
+     * Method responsible for checking if the email included in the token corresponds to any user.
+     * @param email Email included in the token
      * @return UserDetailsImpl
      * @throws UsernameNotFoundException
      */

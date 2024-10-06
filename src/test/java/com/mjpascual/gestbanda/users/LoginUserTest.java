@@ -25,88 +25,88 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * Clase de pruebas unitarias para JWTAuthenticationFilter
- * Esta clase contiene pruebas para verificar el comportamiento del filtro de autenticación JWT
+ * Unit test class for JWTAuthenticationFilter
+ * This class contains tests to verify the behavior of the JWT authentication filter.
  */
 class LoginUserTest {
 
-    // Declaración del filtro que vamos a probar
+    // Declaration of the filter to be tested
     private JWTAuthenticationFilter jwtAuthenticationFilter;
 
-    // Mock del AuthenticationManager que usará el filtro
+    // Mock of the AuthenticationManager that the filter will use
     @Mock
     private AuthenticationManager authenticationManager;
 
-    // Mock del UsersService que usará el filtro
+    // Mock of the UsersService that the filter will use
     @Mock
     private UsersService usersService;
 
     /**
-     * Método de configuración que se ejecuta antes de cada prueba
-     * Inicializa los mocks y crea una nueva instancia del filtro
+     * Setup method that runs before each test
+     * Initializes mocks and creates a new instance of the filter
      */
     @BeforeEach
     void setUp() {
-        // Inicializa los mocks anotados en esta clase
+        // Initialize the mocks annotated in this class
         MockitoAnnotations.openMocks(this);
-        // Crea una nueva instancia del filtro
+        // Create a new instance of the filter
         jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService);
-        // Establece el AuthenticationManager mock en el filtro
+        // Set the mock AuthenticationManager in the filter
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
     }
 
     /**
-     * Prueba el login con credenciales válidas
-     * Verifica que se devuelve un objeto Authentication cuando las credenciales son correctas
+     * Test login with valid credentials
+     * Verifies that an Authentication object is returned when the credentials are correct
      */
     @Test
     void attemptAuthentication_ValidCredentials_ReturnsAuthentication() throws IOException {
-        // Preparación
-        // Crea objetos mock para la petición y respuesta HTTP
+        // Preparation
+        // Create mock objects for the HTTP request and response
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        // Crea un objeto de credenciales con email y contraseña
+        // Create a credentials object with email and password
         AuthCredentials credentials = new AuthCredentials();
         credentials.setEmail("test@example.com");
         credentials.setPassword("password");
 
-        // Convierte las credenciales a JSON y las establece como contenido de la petición
+        // Convert the credentials to JSON and set them as request content
         String jsonCredentials = new ObjectMapper().writeValueAsString(credentials);
         request.setContent(jsonCredentials.getBytes());
 
-        // Crea un usuario y un UserDetails para simular un usuario autenticado
+        // Create a user and UserDetails to simulate an authenticated user
         Users user = new Users();
         user.setEmail("test@example.com");
         UserDetailsImpl userDetails = new UserDetailsImpl(user);
         Authentication mockedAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-        // Configura el mock del AuthenticationManager para que devuelva la autenticación simulada
+        // Configure the mock AuthenticationManager to return the simulated authentication
         when(authenticationManager.authenticate(any())).thenReturn(mockedAuthentication);
 
-        // Ejecución
-        // Llama al método attemptAuthentication del filtro
+        // Execution
+        // Call the attemptAuthentication method of the filter
         Authentication result = jwtAuthenticationFilter.attemptAuthentication(request, response);
 
-        // Verificación
-        // Comprueba que el resultado no es nulo y es igual a la autenticación simulada
+        // Verification
+        // Check that the result is not null and is equal to the simulated authentication
         assertNotNull(result);
         assertEquals(mockedAuthentication, result);
-        // Verifica que se llamó al método authenticate del AuthenticationManager
+        // Verify that the authenticate method of the AuthenticationManager was called
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
     }
 
     /**
-     * Prueba el proceso de login con credenciales inválidas
-     * Verifica que se lanza una AuthenticationException cuando las credenciales son incorrectas
+     * Test the login process with invalid credentials
+     * Verifies that an AuthenticationException is thrown when the credentials are incorrect
      */
     @Test
     void attemptAuthentication_InvalidCredentials_ThrowsAuthenticationException() throws IOException {
-        // Preparación
+        // Preparation
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        // Crea credenciales con una contraseña incorrecta
+        // Create credentials with an incorrect password
         AuthCredentials credentials = new AuthCredentials();
         credentials.setEmail("test@example.com");
         credentials.setPassword("wrongpassword");
@@ -114,38 +114,37 @@ class LoginUserTest {
         String jsonCredentials = new ObjectMapper().writeValueAsString(credentials);
         request.setContent(jsonCredentials.getBytes());
 
-        // Configura el mock para que lance una excepción al autenticar
+        // Configure the mock to throw an exception when authenticating
         when(authenticationManager.authenticate(any())).thenThrow(new AuthenticationException("Invalid credentials") {});
 
-        // Ejecución y Verificación
-        // Comprueba que se lanza una AuthenticationException al intentar autenticar
+        // Execution and Verification
+        // Check that an AuthenticationException is thrown when attempting to authenticate
         assertThrows(AuthenticationException.class, () -> {
             jwtAuthenticationFilter.attemptAuthentication(request, response);
         });
     }
 
     /**
-     * Prueba el proceso de autenticación con JSON inválido
-     * Verifica que se intenta autenticar con credenciales nulas y se lanza una excepción
+     * Test the authentication process with invalid JSON
+     * Verifies that an attempt is made to authenticate with null credentials and an exception is thrown
      */
     @Test
     void attemptAuthentication_InvalidJson_ReturnsUnauthorizedResponse() throws IOException {
-        // Preparación
+        // Preparation
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        // Establece un JSON inválido como contenido de la petición
+        // Set invalid JSON as request content
         request.setContent("invalid json".getBytes());
 
-        // Ejecución
+        // Execution
         jwtAuthenticationFilter.attemptAuthentication(request, response);
 
-        // Verificación: se espera que la respuesta sea SC_UNAUTHORIZED
+        // Verification: expect the response to be SC_UNAUTHORIZED
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 
-        // Verifica que la respuesta contenga el contenido esperado
+        // Verify that the response contains the expected content
         String expectedErrorMessage = "Error al leer los datos de inicio de sesión";
         String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains(expectedErrorMessage));
     }
-
 }

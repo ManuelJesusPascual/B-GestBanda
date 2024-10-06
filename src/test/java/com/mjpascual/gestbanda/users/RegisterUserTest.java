@@ -29,20 +29,20 @@ class RegisterUserTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializamos los mocks
+        // Initialize the mocks
         MockitoAnnotations.openMocks(this);
     }
 
     /**
-     * Test que verifica que el método registerUser de UserController devuelve una respuesta 201 y llama al servicio
+     * Test to verify that the method registerUser of UserController returns a 201 response and calls the service
      * UsersService.createUser()
      */
     @Test
     void testRegisterUser() {
-        // Datos de prueba
+        // Test data
         CreateUserRequest request = new CreateUserRequest("Nombre", "email@example.com", "123456789", "Password1!");
 
-        // Datos simulados para UsersResponse, usando los datos típicos que vendrían de la entidad Users
+        // Simulated data for UsersResponse, using typical data that would come from the Users entity
         UUID userId = UUID.randomUUID();
         UsersResponse usersResponse = UsersResponse.builder()
                 .id(userId)
@@ -56,72 +56,72 @@ class RegisterUserTest {
                 .userHasInstruments(Collections.emptyList())
                 .build();
 
-        // Configuramos el comportamiento del servicio mockeado
+        // Configure the behavior of the mocked service
         when(usersService.createUser(request)).thenReturn(usersResponse);
 
-        // Ejecutamos el método del controlador
+        // Execute the controller method
         ResponseEntity<UsersResponse> responseEntity = userController.registerUser(request);
 
-        // Verificamos que la respuesta sea la esperada
+        // Verify that the response is as expected
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(usersResponse, responseEntity.getBody());
 
-        // Verificamos que se llamó al método createUser del servicio
+        // Verify that the createUser method of the service was called
         verify(usersService, times(1)).createUser(request);
     }
 
     /**
-     * Test que comprobará que si todos los datos son correctos, pasa todas las validaciones sin lanzar excepciones
+     * Test that checks if all data is correct, passing all validations without throwing exceptions
      */
     @Test
     void testValidateSuccess() {
-        // Datos de prueba válidos
+        // Valid test data
         CreateUserRequest request = new CreateUserRequest("Nombre", "email@example.com", "123456789", "Password1!");
 
-        // Verificamos que no lanza ninguna excepción
+        // Verify that no exception is thrown
         assertDoesNotThrow(request::validate);
     }
 
     /**
-     * Test que verificará que se lanzan excepciones cuando algún campo es null
+     * Test that verifies exceptions are thrown when any field is null
      */
     @Test
     void testValidateNullFields() {
-        // Verificamos que se lanza una excepción si el nombre es nulo
+        // Verify that an exception is thrown if the name is null
         CreateUserRequest requestWithNullName = new CreateUserRequest(null, "email@example.com", "123456789", "Password1!");
         assertThrows(GestBandaException.class, requestWithNullName::validate);
 
-        // Verificamos que se lanza una excepción si el email es nulo
+        // Verify that an exception is thrown if the email is null
         CreateUserRequest requestWithNullEmail = new CreateUserRequest("Nombre", null, "123456789", "Password1!");
         assertThrows(GestBandaException.class, requestWithNullEmail::validate);
 
-        // Verificamos que se lanza una excepción si el teléfono es nulo
+        // Verify that an exception is thrown if the phone is null
         CreateUserRequest requestWithNullPhone = new CreateUserRequest("Nombre", "email@example.com", null, "Password1!");
         assertThrows(GestBandaException.class, requestWithNullPhone::validate);
 
-        // Verificamos que se lanza una excepción si la contraseña es nula
+        // Verify that an exception is thrown if the password is null
         CreateUserRequest requestWithNullPassword = new CreateUserRequest("Nombre", "email@example.com", "123456789", null);
         assertThrows(GestBandaException.class, requestWithNullPassword::validate);
     }
 
     /**
-     * Test que verificará que se lanzan excepciones cuando algún campo no es válido
+     * Test that verifies exceptions are thrown when any field is invalid
      */
     @Test
     void testValidateInvalidFields() {
-        // Verificamos que se lanza una excepción si el nombre no es válido
+        // Verify that an exception is thrown if the name is invalid
         CreateUserRequest requestWithInvalidName = new CreateUserRequest("Nombre123", "email@example.com", "123456789", "Password1!");
         assertThrows(GestBandaException.class, requestWithInvalidName::validate);
 
-        // Verificamos que se lanza una excepción si el email no es válido
+        // Verify that an exception is thrown if the email is invalid
         CreateUserRequest requestWithInvalidEmail = new CreateUserRequest("Nombre", "email@", "123456789", "Password1!");
         assertThrows(GestBandaException.class, requestWithInvalidEmail::validate);
 
-        // Verificamos que se lanza una excepción si el teléfono no es válido
+        // Verify that an exception is thrown if the phone is invalid
         CreateUserRequest requestWithInvalidPhone = new CreateUserRequest("Nombre", "email@example.com", "12345", "Password1!");
         assertThrows(GestBandaException.class, requestWithInvalidPhone::validate);
 
-        // Verificamos que se lanza una excepción si la contraseña no es válida
+        // Verify that an exception is thrown if the password is invalid
         CreateUserRequest requestWithInvalidPassword = new CreateUserRequest("Nombre", "email@example.com", "123456789", "password");
         assertThrows(GestBandaException.class, requestWithInvalidPassword::validate);
     }

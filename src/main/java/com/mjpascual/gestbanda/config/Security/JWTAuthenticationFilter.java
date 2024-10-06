@@ -23,21 +23,21 @@ import java.util.Collections;
 import java.util.TimeZone;
 
 /**
- * Filtro que autorizará al usuario a usar los endpoints
+ * Filter that will authorize the user to access the endpoints
  */
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UsersService usersService;
 
-    // Constructor para inyectar el UsersService
+    // Constructor to inject UsersService
     public JWTAuthenticationFilter(UsersService usersService) {
         this.usersService = usersService;
     }
 
     /**
-     * Método que creará un UsernamePasswordAuthenticationToken y con este comprobará si el usuario se corresponde con la BBDD
-     * @param request Peticion HTTP
-     * @param response Respuesta HTTP
+     * Method that will create a UsernamePasswordAuthenticationToken and use it to verify if the user matches the database
+     * @param request HTTP request
+     * @param response HTTP response
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -74,12 +74,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     /**
-     * Método que se lanzará en caso de que la autenticación haya sido satisfactoria. Este método añadirá el token del usuario por cabeceras.
-     * También mandará la información del usuario.
-     * @param request Petición HTTP
-     * @param response Respuesta HTTP
-     * @param chain Cadena de filtros
-     * @param authResult Resultado de la autenticación
+     * Method triggered if authentication is successful. This method will add the user's token via headers.
+     * It will also send user information in the body.
+     * @param request HTTP request
+     * @param response HTTP response
+     * @param chain Filter chain
+     * @param authResult Authentication result
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
@@ -105,6 +105,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
+    /**
+     * Method triggered if authentication fails. This method will return an error message.
+     * @param request HTTP request
+     * @param response HTTP response
+     * @param failed
+     */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         ErrorDetailed errorDetails =
