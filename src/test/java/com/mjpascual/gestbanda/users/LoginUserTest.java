@@ -143,7 +143,7 @@ class LoginUserTest {
         assertEquals(HttpServletResponse.SC_UNAUTHORIZED, response.getStatus());
 
         // Verify that the response contains the expected content
-        String expectedErrorMessage = "Error reading login data";
+        String expectedErrorMessage = "Error al leer los datos de inicio de sesión";
         String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains(expectedErrorMessage));
     }
