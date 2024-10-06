@@ -63,6 +63,9 @@ public class CreateUserRequest implements IValidator {
         if (!name.matches(nameRegex)) {
             throw new GestBandaException(new Exception(), "El nombre introducido no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
         }
+        if(name.length()>60){
+            throw new GestBandaException(new Exception(), "El nombre introducido es demasiado largo", ErrorCodes.ARGUMENT_NOT_VALID);
+        }
         if (!email.matches(emailRegex)) {
             throw new GestBandaException(new Exception(), "El email introducido no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
         }
