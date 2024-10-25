@@ -26,8 +26,8 @@ public class Roles {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "route")
-    private String route;
+    @Column(name = "router")
+    private String router;
 
     @Column(name = "updated_at")
     private Date updated_at;
@@ -35,14 +35,12 @@ public class Roles {
     @Column(name = "created_at")
     private Date created_at;
 
-    @Transient
-    private List<UserHasRoleInBand> userHasRoleInBand;
 
     public static Roles from(RolesResponse rol) {
         return Roles.builder()
                 .id(rol.getId())
                 .name(rol.getName())
-                .route(rol.getRoute())
+                .router(rol.getRouter())
                 .updated_at(rol.getUpdated_at())
                 .created_at(rol.getCreated_at())
                 .build();

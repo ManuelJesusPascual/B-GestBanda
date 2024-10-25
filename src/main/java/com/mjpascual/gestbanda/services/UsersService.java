@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -88,4 +89,18 @@ public class UsersService {
         Users user = usersRepository.findByEmail(mail);
         return UsersResponse.from(user);
     }
+
+    /**
+     * Finds a user by their unique ID, returning a response object if the user exists.
+     * Throws a GestBandaException if the user is not found.
+     *
+     * @param id The UUID of the user to be searched.
+     * @return UsersResponse containing the user's information.
+     */
+    @Transactional
+    public UsersResponse findUser(UUID id) {
+        Users user = usersRepository.findById(id).orElseThrow(() ->  new GestBandaException(new Exception(), "Usuario no encontrado", ErrorCodes.USER_NOT_FOUND));
+        return UsersResponse.from(user);
+    }
+
 }

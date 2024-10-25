@@ -17,7 +17,8 @@ public enum ErrorCodes {
     ARGUMENT_NOT_VALID(4, "ARGUMENT_NOT_VALID", HttpStatus.BAD_REQUEST),
     EMAIL_ALREADY_EXISTS(5, "EMAIL_ALREADY_EXISTS", HttpStatus.CONFLICT),
     PHONE_ALREADY_EXISTS(6, "PHONE_ALREADY_EXISTS", HttpStatus.BAD_REQUEST),
-    READ_ERROR(7, "READ_ERROR", HttpStatus.BAD_REQUEST);
+    READ_ERROR(7, "READ_ERROR", HttpStatus.BAD_REQUEST),
+    UPLOAD_IMAGE_ERROR(8, "UPLOAD_IMAGE_ERROR", HttpStatus.FAILED_DEPENDENCY);
 
     private final int code;
     private final String message;

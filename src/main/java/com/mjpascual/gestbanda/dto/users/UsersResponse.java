@@ -1,7 +1,6 @@
 package com.mjpascual.gestbanda.dto.users;
 
-import com.mjpascual.gestbanda.dto.userHasRoleInBand.UserHasRoleInBandResponse;
-import com.mjpascual.gestbanda.dto.usersInBand.UsersInBandResponse;
+import com.mjpascual.gestbanda.dto.usersBand.UsersBandResponse;
 import com.mjpascual.gestbanda.entities.UserGoTravel;
 import com.mjpascual.gestbanda.entities.UserHasClothes;
 import com.mjpascual.gestbanda.entities.UserHasInstruments;
@@ -27,9 +26,8 @@ public class UsersResponse {
 
     private String phone;
 
-    private List<UsersInBandResponse> usersInBandResponse;
+    private List<UsersBandResponse> usersInBandResponse;
 
-    private List<UserHasRoleInBandResponse> userHasRoleInBandResponse;
 
     private List<UserGoTravel> userGoTravel;
 
@@ -43,8 +41,7 @@ public class UsersResponse {
                 .name(user.getName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .usersInBandResponse(UsersInBandResponse.from(user.getUsersInBand()))
-                .userHasRoleInBandResponse(UserHasRoleInBandResponse.from(user.getUserHasRoleInBand()))
+                .usersInBandResponse(UsersBandResponse.from(user.getUsersBand()))
                 .userGoTravel(user.getUserGoTravel())
                 .userHasClothes(user.getUserHasClothes())
                 .userHasInstruments(user.getUserHasInstruments())
