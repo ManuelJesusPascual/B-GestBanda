@@ -21,19 +21,19 @@ import static java.util.Objects.isNull;
 @Builder
 public class UsersBandResponse {
 
-    private BandsResponse band_id;
+    private BandsResponse band;
 
-    private UsersResponse user_id;
+    private UsersResponse user;
 
-    private RolesResponse role_id;
+    private RolesResponse role;
 
 
     public static UsersBandResponse from(UsersBand usersBand) {
 
         return UsersBandResponse.builder()
-                .band_id(BandsResponse.from(usersBand.getBand_id()))
-                .user_id(UsersResponse.from(usersBand.getUser_id()))
-                .role_id(RolesResponse.from(usersBand.getRol_id()))
+                .band(BandsResponse.from(usersBand.getBand_id()))
+                .user(UsersResponse.from(usersBand.getUser_id()))
+                .role(RolesResponse.from(usersBand.getRol_id()))
                 .build();
 
 

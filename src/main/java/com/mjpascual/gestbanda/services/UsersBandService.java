@@ -8,6 +8,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Service class responsible for managing user-band associations,
@@ -44,6 +46,18 @@ public class UsersBandService {
 
         UsersBand userInBand = usersBandRepository.save(bandToSave);
 
+        return UsersBandResponse.from(userInBand);
+    }
+
+    /**
+     * Finds all bands associated with a specific user ID.
+     *
+     * @param uuid Unique identifier of the user.
+     * @return List of UsersBandResponse objects representing the user's band associations.
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public List<UsersBandResponse> findByUser(UUID uuid) {
+        List<UsersBand> userInBand = usersBandRepository.findByUserID(uuid);
         return UsersBandResponse.from(userInBand);
     }
 }

@@ -68,8 +68,6 @@ public class Bands {
                 .img(bandDTO.getImg())
                 .subscription_id(bandDTO.getSubscription_id())
                 .subscription_end(bandDTO.getSubscription_end())
-                .updated_at(bandDTO.getUpdated_at())
-                .created_at(bandDTO.getCreated_at())
                 .build();
 
     }

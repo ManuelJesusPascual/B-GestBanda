@@ -45,9 +45,9 @@ public class UsersBand {
     public static UsersBand from(UsersBandResponse usersInBandResponse) {
 
         return UsersBand.builder()
-                .band_id(Bands.from(usersInBandResponse.getBand_id()))
-                .user_id(Users.from(usersInBandResponse.getUser_id()))
-                .rol_id(Roles.from(usersInBandResponse.getRole_id()))
+                .band_id(Bands.from(usersInBandResponse.getBand()))
+                .user_id(Users.from(usersInBandResponse.getUser()))
+                .rol_id(Roles.from(usersInBandResponse.getRole()))
                 .build();
 
     }

@@ -3,6 +3,7 @@ package com.mjpascual.gestbanda.controllers;
 import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.bands.CreateBandRequest;
 import com.mjpascual.gestbanda.services.BandsService;
+import jdk.jfr.ContentType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,10 @@ public class BandController {
      * @param img Image file representing the band's logo or photo.
      * @return ResponseEntity containing the registered band's details and HTTP status.
      */
-    @PostMapping("/registerBand")
-    public ResponseEntity<BandsResponse> registerBand(@RequestPart("createBandRequest") CreateBandRequest createBandRequest,
-                                                      @RequestParam("img") MultipartFile img) {
+    @PostMapping(value = "/registerBand",consumes = {"multipart/form-data"})
+    public ResponseEntity<BandsResponse> registerBand(@RequestPart("createBandRequest")  CreateBandRequest createBandRequest,
+                                                      @RequestPart("img") MultipartFile img) {
         BandsResponse response;
-
         createBandRequest.validate();
 
         response = bandsService.createBand(createBandRequest, img);

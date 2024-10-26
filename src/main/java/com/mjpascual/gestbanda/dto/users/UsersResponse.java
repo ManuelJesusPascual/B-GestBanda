@@ -26,14 +26,6 @@ public class UsersResponse {
 
     private String phone;
 
-    private List<UsersBandResponse> usersInBandResponse;
-
-
-    private List<UserGoTravel> userGoTravel;
-
-    private List<UserHasClothes> userHasClothes;
-
-    private List<UserHasInstruments> userHasInstruments;
 
     public static UsersResponse from(Users user) {
         return UsersResponse.builder()
@@ -41,10 +33,6 @@ public class UsersResponse {
                 .name(user.getName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .usersInBandResponse(UsersBandResponse.from(user.getUsersBand()))
-                .userGoTravel(user.getUserGoTravel())
-                .userHasClothes(user.getUserHasClothes())
-                .userHasInstruments(user.getUserHasInstruments())
                 .build();
 
     }

@@ -27,9 +27,6 @@ public class BandsResponse {
 
     private Date subscription_end;
 
-    private Date updated_at;
-
-    private Date created_at;
 
     public static BandsResponse from(Bands band) {
         return BandsResponse.builder()
@@ -38,8 +35,7 @@ public class BandsResponse {
                 .img(band.getImg())
                 .subscription_id(band.getSubscription_id())
                 .subscription_end(band.getSubscription_end())
-                .updated_at(band.getUpdated_at())
-                .created_at(band.getCreated_at())
+
                 .build();
 
     }
@@ -51,8 +47,6 @@ public class BandsResponse {
                 .img(band.getImg())
                 .subscription_id(band.getSubscription_id())
                 .subscription_end(band.getSubscription_end())
-                .updated_at(band.getUpdated_at())
-                .created_at(band.getCreated_at())
                 .build();
 
     }

@@ -3,6 +3,7 @@ package com.mjpascual.gestbanda.services;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.entities.Users;
+import com.mjpascual.gestbanda.entities.UsersBand;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.UsersRepository;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -23,11 +25,12 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UsersBandService usersBandService;
 
-    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) { // The Lazy is added because PasswordEncoder is part of the security configuration.
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, UsersBandService usersBandService) { // The Lazy is added because PasswordEncoder is part of the security configuration.
         this.usersRepository = usersRepository;                                                  // The security layer needs UsersService to get information after a user logs in.
         this.passwordEncoder = passwordEncoder;                                                   // And UsersService needs the security layer to use the password encoder, so it is injected later.
-
+        this.usersBandService = usersBandService;
     }
 
     /**
@@ -87,6 +90,7 @@ public class UsersService {
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse getLoginInfo(String mail) {
         Users user = usersRepository.findByEmail(mail);
+
         return UsersResponse.from(user);
     }
 
