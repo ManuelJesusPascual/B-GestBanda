@@ -36,7 +36,6 @@ public class BandsService {
 
     private final ImgService imgService;
 
-    private final RolesService rolesService;
 
     /**
      * Constructor with dependency injection for various services required for band management.
@@ -53,7 +52,6 @@ public class BandsService {
         this.usersBandService = usersBandService;
         this.usersService = usersService;
         this.imgService = imgService;
-        this.rolesService = rolesService;
     }
 
     /**
@@ -66,47 +64,20 @@ public class BandsService {
     @Transactional(rollbackOn = Exception.class)
     public BandsResponse createBand(CreateBandRequest band, MultipartFile img) {
         UsersResponse user;
-        user = checkUser(band);
+        user = usersService.checkUser(band.getUser());
 
         ImgResponse imgResponse = imgService.uploadImage(img);
 
         Bands bandToSave = Bands.from(band, imgResponse);
-        bandToSave.setSubscription_id(UUID.randomUUID().toString());
-        bandToSave.setSubscription_end(new Date());
-        bandToSave.setCreated_at(new Date());
+
         BandsResponse savedBand = BandsResponse.from(bandsRepository.save(bandToSave));
 
-        insertUserBand(savedBand, user);
+        usersBandService.insertUserBand(savedBand, user);
 
         return savedBand;
     }
 
-    /**
-     * Inserts a new user-band relationship, assigning the "DIRECTOR" role to the user.
-     *
-     * @param savedBand The saved band information.
-     * @param user The user to associate with the band.
-     */
-    private void insertUserBand(BandsResponse savedBand, UsersResponse user) {
-        RolesResponse rolDirector = rolesService.searchRolByName("DIRECTOR");
-        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(savedBand, user, rolDirector);
-        createUsersInBandRequest.validate();
 
-        usersBandService.createUserInBand(createUsersInBandRequest);
-    }
 
-    /**
-     * Validates if the user provided in the CreateBandRequest exists. If the user does not exist, throws an exception.
-     *
-     * @param band The CreateBandRequest containing user details.
-     * @return The user response if valid.
-     */
-    private UsersResponse checkUser(CreateBandRequest band) {
-        UsersResponse user;
-        try {
-            user = usersService.findUser(band.getUser().getId());
-        } catch (Exception e) {
-            throw new GestBandaException(new Exception(), "El usuario que intenta crear la banda no es válido", ErrorCodes.ARGUMENT_NOT_VALID);        }
-        return user;
-    }
+
 }

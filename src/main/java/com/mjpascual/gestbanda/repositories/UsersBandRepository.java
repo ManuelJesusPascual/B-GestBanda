@@ -12,4 +12,7 @@ public interface UsersBandRepository extends JpaRepository<UsersBand, UUID> {
 
     @Query(value = "SELECT * FROM user_band WHERE user_id = ?1", nativeQuery = true)
     public List<UsersBand> findByUserID(UUID userID);
+
+    @Query(value = "SELECT * FROM user_band WHERE user_id = ?1 AND band_id = ?2", nativeQuery = true)
+    public UsersBand findByUserBandID(UUID userID,UUID bandID);
 }

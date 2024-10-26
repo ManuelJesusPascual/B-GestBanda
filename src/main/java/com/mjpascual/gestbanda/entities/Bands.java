@@ -77,6 +77,9 @@ public class Bands {
         return Bands.builder()
                 .name(band.getName())
                 .img(imgResponse.getData().getLink())
+                .subscription_id(UUID.randomUUID().toString())
+                .subscription_end(new Date())
+                .created_at(new Date())
                 .build();
     }
 }

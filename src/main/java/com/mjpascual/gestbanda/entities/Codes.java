@@ -3,6 +3,7 @@ package com.mjpascual.gestbanda.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -23,7 +24,7 @@ public class Codes {
     private String code;
 
     @Column(name = "end_date")
-    private String endDate;
+    private Date endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "band_id")

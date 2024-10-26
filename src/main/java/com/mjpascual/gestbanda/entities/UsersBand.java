@@ -68,6 +68,7 @@ public class UsersBand {
                 .band_id(Bands.from(request.getBand_id()))
                 .user_id(Users.from(request.getUser_id()))
                 .rol_id(Roles.from(request.getRole_id()))
+                .created_at(new Date())
                 .build();
     }
 }
