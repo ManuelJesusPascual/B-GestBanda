@@ -2,6 +2,7 @@ package com.mjpascual.gestbanda.entities;
 
 import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.bands.CreateBandRequest;
+import com.mjpascual.gestbanda.dto.img.ImgResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,10 +43,7 @@ public class Bands {
     private Date created_at;
 
     @Transient
-    private List<UsersInBand> usersInBand;
-
-    @Transient
-    private List<UserHasRoleInBand> userHasRoleInBand;
+    private List<UsersBand> usersBand;
 
     @OneToMany(mappedBy = "band_id", fetch = FetchType.LAZY)
     private List<Codes> codes;
@@ -70,11 +68,15 @@ public class Bands {
                 .img(bandDTO.getImg())
                 .subscription_id(bandDTO.getSubscription_id())
                 .subscription_end(bandDTO.getSubscription_end())
-                .updated_at(bandDTO.getUpdated_at())
-                .created_at(bandDTO.getCreated_at())
                 .build();
 
     }
 
 
+    public static Bands from(CreateBandRequest band, ImgResponse imgResponse) {
+        return Bands.builder()
+                .name(band.getName())
+                .img(imgResponse.getData().getLink())
+                .build();
+    }
 }

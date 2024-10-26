@@ -27,24 +27,6 @@ CREATE TABLE users
 
 );
 
-CREATE TABLE users_in_band
-(
-
-    id         uuid,
-    band_id    uuid      NOT NULL,
-    user_id    uuid      NOT NULL,
-    updated_at timestamp,
-    created_at timestamp NOT NULL,
-    CONSTRAINT PK_USERS_IN_BAND PRIMARY KEY (id),
-    CONSTRAINT FK_USERS_IN_BAND_BAND FOREIGN KEY (band_id) REFERENCES bands (id),
-    CONSTRAINT FK_USERS_IN_BAND_USER FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT UNIQUE_USERS_IN_BAND UNIQUE (band_id, user_id)
-
-);
-
-CREATE INDEX I_users_in_band_band ON users_in_band (band_id);
-CREATE INDEX I_users_in_band_user ON users_in_band (user_id);
-
 
 CREATE TABLE roles
 (
@@ -57,7 +39,7 @@ CREATE TABLE roles
     CONSTRAINT PK_ROLES PRIMARY KEY (id)
 );
 
-CREATE TABLE user_has_role_in_band
+CREATE TABLE user_band
 (
     id         uuid,
     rol_id     uuid      NOT NULL,
@@ -65,17 +47,17 @@ CREATE TABLE user_has_role_in_band
     band_id    uuid      NOT NULL,
     updated_at timestamp,
     created_at timestamp NOT NULL,
-    CONSTRAINT PK_USER_HAS_ROLE_IN_BAND PRIMARY KEY (id),
-    CONSTRAINT FK_USER_HAS_ROLE_IN_BAND_ROL FOREIGN KEY (rol_id) references roles (id),
-    CONSTRAINT FK_USER_HAS_ROLE_IN_BAND_USER FOREIGN KEY (user_id) references users (id),
-    CONSTRAINT FK_USER_HAS_ROLE_IN_BAND_BAND FOREIGN KEY (band_id) references bands (id),
-    CONSTRAINT UNIQUE_USER_HAS_ROLE_IN_BAND UNIQUE (rol_id, user_id, band_id)
+    CONSTRAINT PK_USER_BAND PRIMARY KEY (id),
+    CONSTRAINT FK_USER_BAND_ROL FOREIGN KEY (rol_id) references roles (id),
+    CONSTRAINT FK_USER_BAND_USER FOREIGN KEY (user_id) references users (id),
+    CONSTRAINT FK_USER_BAND_BAND FOREIGN KEY (band_id) references bands (id),
+    CONSTRAINT UNIQUE_USER_BAND UNIQUE (user_id, band_id)
 
 );
 
-CREATE INDEX I_user_has_role_in_band_rol ON user_has_role_in_band (rol_id);
-CREATE INDEX I_user_has_role_in_band_user ON user_has_role_in_band (user_id);
-CREATE INDEX I_user_has_role_in_band_band ON user_has_role_in_band (band_id);
+CREATE INDEX I_user_band_rol ON user_band (rol_id);
+CREATE INDEX I_user_band_user ON user_band (user_id);
+CREATE INDEX I_user_band_band ON user_band (band_id);
 
 
 CREATE TABLE codes
@@ -242,10 +224,10 @@ CREATE INDEX I_user_go_travel_user ON user_go_travel (user_id);
 
 
 INSERT INTO roles(id, name, router, created_at)
-VALUES (gen_random_uuid(), 'Componente', 'userRouter', now());
+VALUES (gen_random_uuid(), 'COMPONENTE', 'userRouter', now());
 INSERT INTO roles(id, name, router, created_at)
-VALUES (gen_random_uuid(), 'Jefe de Voz', 'voiceLeaderRouter', now());
+VALUES (gen_random_uuid(), 'JEFE DE VOZ', 'voiceLeaderRouter', now());
 INSERT INTO roles(id, name, router, created_at)
-VALUES (gen_random_uuid(), 'Director', 'directorRouter', now());
+VALUES (gen_random_uuid(), 'DIRECTOR', 'directorRouter', now());
 
 

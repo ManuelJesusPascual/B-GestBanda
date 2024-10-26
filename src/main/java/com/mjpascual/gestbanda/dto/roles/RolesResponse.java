@@ -16,7 +16,7 @@ public class RolesResponse {
 
     private UUID id;
     private String name;
-    private String route;
+    private String router;
     private Date updated_at;
     private Date created_at;
 
@@ -24,7 +24,7 @@ public class RolesResponse {
         return RolesResponse.builder()
                 .id(rol.getId())
                 .name(rol.getName())
-                .route(rol.getRoute())
+                .router(rol.getRouter())
                 .updated_at(rol.getUpdated_at())
                 .created_at(rol.getCreated_at())
                 .build();

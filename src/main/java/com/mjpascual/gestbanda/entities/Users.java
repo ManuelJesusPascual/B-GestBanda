@@ -42,10 +42,7 @@ public class Users {
     private Date created_at;
 
     @Transient
-    private List<UsersInBand> usersInBand;
-
-    @Transient
-    private List<UserHasRoleInBand> userHasRoleInBand;
+    private List<UsersBand> usersBand;
 
     @Transient
     private List<UserGoTravel> userGoTravel;
@@ -63,11 +60,6 @@ public class Users {
                 .name(userDTO.getName())
                 .email(userDTO.getEmail().toLowerCase())
                 .phone(userDTO.getPhone())
-                .usersInBand(UsersInBand.from(userDTO.getUsersInBandResponse()))
-                .userHasRoleInBand(UserHasRoleInBand.from(userDTO.getUserHasRoleInBandResponse()))
-                .userGoTravel(userDTO.getUserGoTravel())
-                .userHasClothes(userDTO.getUserHasClothes())
-                .userHasInstruments(userDTO.getUserHasInstruments())
                 .build();
 
     }
@@ -78,8 +70,7 @@ public class Users {
                 .email(createUserRequest.getEmail().toLowerCase())
                 .password(createUserRequest.getPassword()) //TODO: Encriptar esto
                 .phone(createUserRequest.getPhone())
-                .usersInBand(new ArrayList<>())
-                .userHasRoleInBand(new ArrayList<>())
+                .usersBand(new ArrayList<>())
                 .userGoTravel(new ArrayList<>())
                 .userHasClothes(new ArrayList<>())
                 .userHasInstruments(new ArrayList<>())
