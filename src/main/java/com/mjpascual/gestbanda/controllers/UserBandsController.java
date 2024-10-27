@@ -22,7 +22,7 @@ public class UserBandsController {
 
     private final UsersBandService usersBandService;
 
-    public UserBandsController(BandsService bandsService, UsersBandService usersBandService) {
+    public UserBandsController(UsersBandService usersBandService) {
         this.usersBandService = usersBandService;
     }
 

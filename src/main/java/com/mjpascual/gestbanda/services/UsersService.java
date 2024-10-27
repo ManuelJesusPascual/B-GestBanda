@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.services;
 
+import com.mjpascual.gestbanda.dto.bands.CreateBandRequest;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.entities.Users;
@@ -20,6 +21,10 @@ import java.util.concurrent.ExecutionException;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Service class responsible for managing user-related operations,
+ * including creation, validation, and retrieval of users in the system.
+ */
 @Service
 public class UsersService {
 
@@ -27,37 +32,45 @@ public class UsersService {
     private final PasswordEncoder passwordEncoder;
     private final UsersBandService usersBandService;
 
-    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, UsersBandService usersBandService) { // The Lazy is added because PasswordEncoder is part of the security configuration.
-        this.usersRepository = usersRepository;                                                  // The security layer needs UsersService to get information after a user logs in.
-        this.passwordEncoder = passwordEncoder;                                                   // And UsersService needs the security layer to use the password encoder, so it is injected later.
+    /**
+     * Constructs a new UsersService instance with dependencies injected.
+     * Uses @Lazy annotation on passwordEncoder due to circular dependency with security configuration.
+     *
+     * @param usersRepository Repository for accessing user data
+     * @param passwordEncoder Encoder for encoding user passwords
+     * @param usersBandService Service for managing user-band relationships
+     */
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, UsersBandService usersBandService) {
+        this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
         this.usersBandService = usersBandService;
     }
 
     /**
-     * Method that creates a new user.
-     * First, it will call the method validateCreateUser() to check if this user already exists in the database.
-     * If it does not exist, it will call the database to create the user; if it exists, the validateCreateUser() method will throw an exception.
-     * Before creating the user, it sets the creation date and encodes the password.
-     * @return Created user.
+     * Creates a new user in the system.
+     * Validates if the user already exists before creating.
+     * Sets creation date and encodes the password.
+     *
+     * @param user CreateUserRequest containing user details
+     * @return UsersResponse representing the newly created user
      */
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse createUser(CreateUserRequest user) {
         validateCreateUser(user);
 
         Users userRegister = Users.from(user);
-        userRegister.setCreated_at(new Date());
         userRegister.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return UsersResponse.from(usersRepository.save(userRegister));
     }
 
     /**
-     * Method that validates if the user already exists in the database.
-     * It performs requests to the database simultaneously.
-     * If the requests return results, it throws an exception indicating that the user already exists.
-     * Otherwise, it continues with the process.
+     * Validates if a user already exists in the database by email and phone.
+     * Uses asynchronous requests for validation.
+     * Throws an exception if a duplicate email or phone is found.
      *
-     * @param user User to create.
+     * @param user CreateUserRequest representing the user to validate
+     * @throws GestBandaException if the user already exists in the system
      */
     private void validateCreateUser(CreateUserRequest user) {
         try {
@@ -65,10 +78,11 @@ public class UsersService {
             CompletableFuture<Users> phoneValidationFuture = CompletableFuture.supplyAsync(() -> usersRepository.findByPhone(user.getPhone().toLowerCase()));
 
             CompletableFuture<Void> allValidations = CompletableFuture.allOf(emailValidationFuture, phoneValidationFuture);
-            allValidations.join(); // Wait for both users to be fetched.
+            allValidations.join(); // Wait for both validations to complete.
 
             Users userAlreadyExistsByEmail = emailValidationFuture.get();
             Users userAlreadyExistsByPhone = phoneValidationFuture.get();
+
             if (!isNull(userAlreadyExistsByEmail)) {
                 throw new GestBandaException(new Exception(), "Se ha intentado registrar un usuario con un email ya existente", ErrorCodes.EMAIL_ALREADY_EXISTS);
             }
@@ -83,9 +97,10 @@ public class UsersService {
     }
 
     /**
-     * Method that retrieves the information of a user for login.
-     * @param mail Email of the user to retrieve.
-     * @return User information.
+     * Retrieves login information for a user based on their email.
+     *
+     * @param mail Email address of the user to retrieve
+     * @return UsersResponse containing user information
      */
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse getLoginInfo(String mail) {
@@ -95,16 +110,32 @@ public class UsersService {
     }
 
     /**
-     * Finds a user by their unique ID, returning a response object if the user exists.
-     * Throws a GestBandaException if the user is not found.
+     * Finds and retrieves a user by their unique ID.
+     * Throws an exception if the user is not found.
      *
-     * @param id The UUID of the user to be searched.
-     * @return UsersResponse containing the user's information.
+     * @param id UUID of the user to find
+     * @return UsersResponse representing the user's information
      */
     @Transactional
     public UsersResponse findUser(UUID id) {
-        Users user = usersRepository.findById(id).orElseThrow(() ->  new GestBandaException(new Exception(), "Usuario no encontrado", ErrorCodes.USER_NOT_FOUND));
+        Users user = usersRepository.findById(id).orElseThrow(() -> new GestBandaException(new Exception(), "Usuario no encontrado", ErrorCodes.USER_NOT_FOUND));
         return UsersResponse.from(user);
     }
 
+    /**
+     * Checks the validity of a user based on a UsersResponse object.
+     * Throws an exception if the user is invalid.
+     *
+     * @param usersResponse UsersResponse containing user details to validate
+     * @return UsersResponse with confirmed user information
+     */
+    public UsersResponse checkUser(UsersResponse usersResponse) {
+        UsersResponse user;
+        try {
+            user = findUser(usersResponse.getId());
+        } catch (Exception e) {
+            throw new GestBandaException(new Exception(), "El usuario que intenta crear la banda no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
+        }
+        return user;
+    }
 }

@@ -68,12 +68,13 @@ public class Users {
         return Users.builder()
                 .name(createUserRequest.getName())
                 .email(createUserRequest.getEmail().toLowerCase())
-                .password(createUserRequest.getPassword()) //TODO: Encriptar esto
+                .password(createUserRequest.getPassword())
                 .phone(createUserRequest.getPhone())
                 .usersBand(new ArrayList<>())
                 .userGoTravel(new ArrayList<>())
                 .userHasClothes(new ArrayList<>())
                 .userHasInstruments(new ArrayList<>())
+                .created_at(new Date())
                 .build();
 
     }
