@@ -26,6 +26,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for validating the behavior of CodesService methods related to
+ * joining a band using a code. This class uses Mockito to mock dependencies
+ * and to test various scenarios including valid, expired, and invalid codes.
+ */
 class JoinBandByCodeTest {
 
     @Mock
@@ -46,10 +51,15 @@ class JoinBandByCodeTest {
 
     @BeforeEach
     void setUp() {
+        // Initialize mocks and set up the required scenarios for the tests.
         MockitoAnnotations.openMocks(this);
         setupMocks();
     }
 
+    /**
+     * Sets up mock responses for different code scenarios.
+     * This includes valid codes, expired codes, and invalid codes.
+     */
     private void setupMocks() {
         // Setup for valid code
         Codes validCode = new Codes();
@@ -72,6 +82,11 @@ class JoinBandByCodeTest {
         when(codesRepository.findByCode(INVALID_CODE)).thenReturn(null);
     }
 
+    /**
+     * Test to verify that a valid code returns the corresponding band response.
+     * It asserts that the response is not null and that the repository
+     * was called with the valid code.
+     */
     @Test
     void getBandByCode_WithValidCode_ShouldReturnBand() {
         // Act
@@ -82,6 +97,10 @@ class JoinBandByCodeTest {
         verify(codesRepository).findByCode(VALID_CODE);
     }
 
+    /**
+     * Test to verify that an expired code throws a GestBandaException
+     * with the appropriate error code.
+     */
     @Test
     void getBandByCode_WithExpiredCode_ShouldThrowException() {
         try {
@@ -93,6 +112,10 @@ class JoinBandByCodeTest {
         }
     }
 
+    /**
+     * Test to verify that an invalid code throws a GestBandaException
+     * with the appropriate error code.
+     */
     @Test
     void getBandByCode_WithInvalidCode_ShouldThrowException() {
         try {
@@ -104,6 +127,11 @@ class JoinBandByCodeTest {
         }
     }
 
+    /**
+     * Test to verify that a valid code and user allows successful joining
+     * of a band. It checks that the response is not null and that the
+     * required methods are called on the mocked services.
+     */
     @Test
     void joinBandByCode_WithValidCodeAndUser_ShouldSucceed() {
         // Arrange
@@ -131,6 +159,10 @@ class JoinBandByCodeTest {
         verify(usersBandService).insertUserBand(any(BandsResponse.class), any(UsersResponse.class));
     }
 
+    /**
+     * Test to verify that providing an invalid user throws a GestBandaException
+     * with the appropriate error code.
+     */
     @Test
     void joinBandByCode_WithInvalidUser_ShouldThrowException() {
         // Arrange
@@ -154,6 +186,10 @@ class JoinBandByCodeTest {
         }
     }
 
+    /**
+     * Test to verify that attempting to join a band when the user is already
+     * in that band throws a GestBandaException with the appropriate error code.
+     */
     @Test
     void joinBandByCode_WhenUserAlreadyInBand_ShouldThrowException() {
         // Arrange
