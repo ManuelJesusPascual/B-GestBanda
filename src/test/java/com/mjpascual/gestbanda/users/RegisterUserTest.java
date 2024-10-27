@@ -49,11 +49,6 @@ class RegisterUserTest {
                 .name("Nombre")
                 .email("email@example.com")
                 .phone("123456789")
-                .usersInBandResponse(Collections.emptyList())
-                .userHasRoleInBandResponse(Collections.emptyList())
-                .userGoTravel(Collections.emptyList())
-                .userHasClothes(Collections.emptyList())
-                .userHasInstruments(Collections.emptyList())
                 .build();
 
         // Configure the behavior of the mocked service
