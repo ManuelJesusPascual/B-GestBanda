@@ -48,9 +48,9 @@ public class CreateBandRequest implements IValidator {
      */
     @Override
     public void validateFields() {
-        String nameRegex = "^[a-zA-Z. ]+$";
+        String bandNameRegex = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ. ]+$";
 
-        if (!name.matches(nameRegex)) {
+        if (!name.matches(bandNameRegex)) {
             throw new GestBandaException(new Exception(), "El nombre introducido no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
         }
         if(name.length() > 120) {
