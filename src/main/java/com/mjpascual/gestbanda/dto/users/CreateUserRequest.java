@@ -57,7 +57,7 @@ public class CreateUserRequest implements IValidator {
     @Override
     public void validateFields() {
         String nameRegex = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$";
-        String emailRegex = "^^[\\\\wñÑ.-]+@([\\\\w-]+\\\\.)+[\\\\w-]{2,4}$";
+        String emailRegex = "^[a-zA-Z0-9ñÑ._%+-]+@[a-zA-Z0-9ñÑ.-]+\\.[a-zA-Z]{2,}$";
         String phoneRegex = "^[0-9]{9}$";
         String passwordRegex = "^(?=.*?[A-ZÑÁÉÍÓÚ])(?=.*?[a-zñáéíóú])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
         if (!name.matches(nameRegex)) {
