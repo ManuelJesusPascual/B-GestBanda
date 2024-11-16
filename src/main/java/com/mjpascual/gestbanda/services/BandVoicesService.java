@@ -56,13 +56,13 @@ public class BandVoicesService {
      * @param request the request containing the voice name and band UUID
      * @return a response containing the updated band voices information
      */
-    public BandsVoicesResponse addVoiceToBand(AddVoiceToBandRequest request) {
+    public VoicesResponse addVoiceToBand(AddVoiceToBandRequest request) {
         VoicesResponse voice = voicesService.findVoiceByName(request.getVoice_name());
         BandsResponse band = bandsService.findBandById(request.getBand_uuid());
         BandVoices bandVoice = BandVoices.from(voice, band);
         checkBandVoice(bandVoice);
         BandVoices response = bandVoicesRepository.save(bandVoice);
-        return BandsVoicesResponse.from(response);
+        return VoicesResponse.from(response.getId_voice());
     }
 
     /**

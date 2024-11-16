@@ -39,8 +39,8 @@ public class BandVoicesController {
      * @return a ResponseEntity containing the response data and the HTTP status
      */
     @PostMapping(value = "/addVoiceToBand")
-    public ResponseEntity<BandsVoicesResponse> createVoice(@RequestBody AddVoiceToBandRequest addVoiceToBandRequest) {
-        BandsVoicesResponse response;
+    public ResponseEntity<VoicesResponse> createVoice(@RequestBody AddVoiceToBandRequest addVoiceToBandRequest) {
+        VoicesResponse response;
         addVoiceToBandRequest.validate();
 
         response = bandVoicesService.addVoiceToBand(addVoiceToBandRequest);

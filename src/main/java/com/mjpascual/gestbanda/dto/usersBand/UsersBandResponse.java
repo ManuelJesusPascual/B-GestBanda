@@ -37,7 +37,7 @@ public class UsersBandResponse {
                 .band(BandsResponse.from(usersBand.getBand_id()))
                 .user(UsersResponse.from(usersBand.getUser_id()))
                 .role(RolesResponse.from(usersBand.getRol_id()))
-                .voice(VoicesResponse.from(usersBand.getVoice_id()))
+                .voice(usersBand.getVoice_id() != null ? VoicesResponse.from(usersBand.getVoice_id()) : null)
                 .build();
 
 
