@@ -52,7 +52,7 @@ public class UsersBand {
                 .band_id(Bands.from(usersInBandResponse.getBand()))
                 .user_id(Users.from(usersInBandResponse.getUser()))
                 .rol_id(Roles.from(usersInBandResponse.getRole()))
-                .voice_id(Voices.from(usersInBandResponse.getVoice()))
+                .voice_id(usersInBandResponse.getVoice() != null ? Voices.from(usersInBandResponse.getVoice()): null)
                 .build();
 
     }
@@ -73,7 +73,7 @@ public class UsersBand {
                 .band_id(Bands.from(request.getBand_id()))
                 .user_id(Users.from(request.getUser_id()))
                 .rol_id(Roles.from(request.getRole_id()))
-                .voice_id(Voices.from(request.getVoice_id()))
+                .voice_id(request.getVoice_id() != null ? Voices.from(request.getVoice_id()): null)
                 .created_at(new Date())
                 .build();
     }
