@@ -85,10 +85,12 @@ public class UsersBandService {
             throw new GestBandaException(new Exception(), "Este usuario ya se encuentra en esa banda", ErrorCodes.USER_ALREADY_IN_BAND);
         }
 
-        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, rolDirector);
+        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, rolDirector,null);
         createUsersInBandRequest.validate();
 
         createUserInBand(createUsersInBandRequest);
     }
+
+
 
 }

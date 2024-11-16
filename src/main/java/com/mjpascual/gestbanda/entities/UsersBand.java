@@ -35,6 +35,10 @@ public class UsersBand {
     @JoinColumn(name = "rol_id")
     private Roles rol_id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voice_id")
+    private Voices voice_id;
+
     @Column(name = "updated_at")
     private Date updated_at;
 
@@ -48,6 +52,7 @@ public class UsersBand {
                 .band_id(Bands.from(usersInBandResponse.getBand()))
                 .user_id(Users.from(usersInBandResponse.getUser()))
                 .rol_id(Roles.from(usersInBandResponse.getRole()))
+                .voice_id(Voices.from(usersInBandResponse.getVoice()))
                 .build();
 
     }
@@ -68,6 +73,7 @@ public class UsersBand {
                 .band_id(Bands.from(request.getBand_id()))
                 .user_id(Users.from(request.getUser_id()))
                 .rol_id(Roles.from(request.getRole_id()))
+                .voice_id(Voices.from(request.getVoice_id()))
                 .created_at(new Date())
                 .build();
     }

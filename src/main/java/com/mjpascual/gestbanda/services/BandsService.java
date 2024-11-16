@@ -77,7 +77,16 @@ public class BandsService {
         return savedBand;
     }
 
-
-
+    /**
+     * Finds a band by its unique identifier.
+     *
+     * @param bandUuid the unique identifier of the band to be found
+     * @return a BandsResponse object containing the details of the found band
+     * @throws GestBandaException if no band is found with the given UUID
+     */
+    public BandsResponse findBandById(UUID bandUuid) {
+        Bands band = bandsRepository.findById(bandUuid).orElseThrow(() -> new GestBandaException(new Exception(), "Banda no encontrada", ErrorCodes.BAND_NOT_FOUND));
+        return BandsResponse.from(band);
+    }
 
 }

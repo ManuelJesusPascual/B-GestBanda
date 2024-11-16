@@ -39,18 +39,45 @@ CREATE TABLE roles
     CONSTRAINT PK_ROLES PRIMARY KEY (id)
 );
 
+CREATE TABLE voices
+(
+
+    id         uuid,
+    name       varchar(90)  NOT NULL UNIQUE,
+    updated_at timestamp,
+    created_at timestamp    NOT NULL,
+    CONSTRAINT PK_VOICES PRIMARY KEY (id)
+);
+
+CREATE TABLE band_voices(
+
+    id uuid,
+    id_band uuid NOT NULL,
+    id_voice uuid NOT NULL,
+    updated_at timestamp,
+    created_at timestamp    NOT NULL,
+    CONSTRAINT PK_BAND_VOICES PRIMARY KEY (id),
+    CONSTRAINT UNIQUE_BAND_VOICES UNIQUE (id_band, id_voice)
+
+);
+
+CREATE INDEX I_band_voices_band ON band_voices (id_band);
+CREATE INDEX I_band_voices_band ON band_voices (id_voice);
+
 CREATE TABLE user_band
 (
     id         uuid,
     rol_id     uuid      NOT NULL,
     user_id    uuid      NOT NULL,
     band_id    uuid      NOT NULL,
+    voice_id   uuid,
     updated_at timestamp,
     created_at timestamp NOT NULL,
     CONSTRAINT PK_USER_BAND PRIMARY KEY (id),
     CONSTRAINT FK_USER_BAND_ROL FOREIGN KEY (rol_id) references roles (id),
     CONSTRAINT FK_USER_BAND_USER FOREIGN KEY (user_id) references users (id),
     CONSTRAINT FK_USER_BAND_BAND FOREIGN KEY (band_id) references bands (id),
+    CONSTRAINT FK_USER_BAND_VOICE FOREIGN KEY (voice_id) references voices(id),
     CONSTRAINT UNIQUE_USER_BAND UNIQUE (user_id, band_id)
 
 );
@@ -58,6 +85,7 @@ CREATE TABLE user_band
 CREATE INDEX I_user_band_rol ON user_band (rol_id);
 CREATE INDEX I_user_band_user ON user_band (user_id);
 CREATE INDEX I_user_band_band ON user_band (band_id);
+CREATE INDEX I_user_band_voice ON user_band (voice_id);
 
 
 CREATE TABLE codes
