@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,6 +57,7 @@ public class BandVoicesService {
      * @param request the request containing the voice name and band UUID
      * @return a response containing the updated band voices information
      */
+    @Transactional(rollbackOn = Exception.class)
     public VoicesResponse addVoiceToBand(AddVoiceToBandRequest request) {
         VoicesResponse voice = voicesService.findVoiceByName(request.getVoice_name());
         BandsResponse band = bandsService.findBandById(request.getBand_uuid());
@@ -71,6 +73,7 @@ public class BandVoicesService {
      * @param id the UUID of the band
      * @return a list of voices associated with the band
      */
+    @Transactional(rollbackOn = Exception.class)
     public List<VoicesResponse> getVoicesBand(UUID id) {
         List<BandVoices> bandVoices = bandVoicesRepository.findAllBandVoices(id);
         List<VoicesResponse> responses = VoicesResponse.fromBandVoices(bandVoices);
@@ -83,6 +86,7 @@ public class BandVoicesService {
      * @param id the UUID of the band
      * @return a list of voices not associated with the band
      */
+    @Transactional(rollbackOn = Exception.class)
     public List<VoicesResponse> getVoicesBandNotHave(UUID id) {
         List<Voices> voices = voicesRepository.findVoicesBandNotHave(id);
         List<VoicesResponse> responses = VoicesResponse.fromVoices(voices);
@@ -102,17 +106,35 @@ public class BandVoicesService {
         }
     }
 
+    public BandVoices voiceExistInBand( UUID voice_id,UUID band_id) {
+        BandVoices exist = bandVoicesRepository.checkIfExist(voice_id, band_id);
+        if(isNull(exist)) {
+            throw new GestBandaException(new Exception(),"Esa voz no existe en esa banda", ErrorCodes.ARGUMENT_NOT_VALID);
+        }
+        return exist;
+    }
+
     /**
      * Deletes a specific voice from a band.
      *
      * @param idVoice the UUID of the voice to delete
      * @param idBand  the UUID of the band from which to delete the voice
      */
+    @Transactional(rollbackOn = Exception.class)
     public void deleteVoiceBand(UUID idVoice, UUID idBand) {
         BandVoices bandVoices = bandVoicesRepository.checkIfExist(idVoice, idBand);
         if (isNull(bandVoices)) {
             throw new GestBandaException(new Exception(),"No se ha encontrado esa voz en la banda", ErrorCodes.ARGUMENT_NOT_VALID);
         }
+        resetToDefaultVoice(idVoice,idBand);
         bandVoicesRepository.delete(bandVoices);
+    }
+
+    private void resetToDefaultVoice(UUID idVoice,UUID idBand) {
+
+        Voices sinVoz = voicesRepository.getNoVoice();
+        voicesRepository.setCodesVoicesToDefault(sinVoz.getId(),idVoice,idBand,new Date());
+        voicesRepository.setUserVoicesToDefault(sinVoz.getId(),idVoice,idBand,new Date());
+
     }
 }

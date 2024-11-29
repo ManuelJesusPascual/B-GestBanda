@@ -129,6 +129,7 @@ public class UsersService {
      * @param usersResponse UsersResponse containing user details to validate
      * @return UsersResponse with confirmed user information
      */
+    @Transactional(rollbackOn = Exception.class)
     public UsersResponse checkUser(UsersResponse usersResponse) {
         UsersResponse user;
         try {

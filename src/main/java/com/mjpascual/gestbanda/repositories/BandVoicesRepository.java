@@ -18,11 +18,9 @@ public interface BandVoicesRepository extends JpaRepository<BandVoices, UUID> {
     @Query(value = "SELECT * FROM band_voices WHERE id_band = ?1", nativeQuery = true)
     public List<BandVoices> findAllBandVoices(UUID id);
 
-
-
-
     @Query(value = "SELECT * FROM band_voices WHERE id_voice = ?1 AND id_band = ?2", nativeQuery = true)
     public BandVoices checkIfExist(UUID idVoice,UUID idBand);
+
 
 
 }

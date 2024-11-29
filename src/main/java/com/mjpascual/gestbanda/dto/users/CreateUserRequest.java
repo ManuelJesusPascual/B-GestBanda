@@ -59,7 +59,7 @@ public class CreateUserRequest implements IValidator {
         String nameRegex = "^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$";
         String emailRegex = "^[a-zA-Z0-9ñÑ._%+-]+@[a-zA-Z0-9ñÑ.-]+\\.[a-zA-Z]{2,}$";
         String phoneRegex = "^[0-9]{9}$";
-        String passwordRegex = "^(?=.*?[A-ZÑÁÉÍÓÚ])(?=.*?[a-zñáéíóú])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
+        String passwordRegex = "^(?=.*?[A-ZÑÁÉÍÓÚ])(?=.*?[a-zñáéíóú])(?=.*?[0-9])(?=.*?[#?!@$%^&*\\-+=_/~.,<>;:{}[\\]()|\\\\]]).{8,}$";
         if (!name.matches(nameRegex)) {
             throw new GestBandaException(new Exception(), "El nombre introducido no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
         }

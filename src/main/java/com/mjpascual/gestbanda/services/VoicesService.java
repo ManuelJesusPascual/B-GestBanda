@@ -1,18 +1,17 @@
 package com.mjpascual.gestbanda.services;
 
-import com.mjpascual.gestbanda.dto.roles.RolesResponse;
-import com.mjpascual.gestbanda.dto.voices.AddVoiceToBandRequest;
 import com.mjpascual.gestbanda.dto.voices.VoicesResponse;
 import com.mjpascual.gestbanda.entities.Voices;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
-import com.mjpascual.gestbanda.repositories.RolesRepository;
 import com.mjpascual.gestbanda.repositories.VoicesRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 /**
  * Service class for managing voice-related operations.
@@ -41,6 +40,7 @@ public class VoicesService {
      * @param name The name of the voice to be found.
      * @return A VoicesResponse object containing the voice details.
      */
+    @Transactional(rollbackOn = Exception.class)
     public VoicesResponse findVoiceByName(String name) {
         VoicesResponse response;
         Voices voice = voicesRepository.findVoiceByName(name);
@@ -55,6 +55,7 @@ public class VoicesService {
      * @return A VoicesResponse object containing the voice details.
      * @throws GestBandaException if the voice is not found.
      */
+    @Transactional(rollbackOn = Exception.class)
     public VoicesResponse findVoiceById(UUID id) {
         VoicesResponse response;
         Voices voice = voicesRepository.findById(id)
@@ -62,4 +63,6 @@ public class VoicesService {
         response = VoicesResponse.from(voice);
         return response;
     }
+
+
 }

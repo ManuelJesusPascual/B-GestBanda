@@ -51,18 +51,20 @@ CREATE TABLE voices
 
 CREATE TABLE band_voices(
 
-    id uuid,
-    id_band uuid NOT NULL,
-    id_voice uuid NOT NULL,
-    updated_at timestamp,
-    created_at timestamp    NOT NULL,
-    CONSTRAINT PK_BAND_VOICES PRIMARY KEY (id),
-    CONSTRAINT UNIQUE_BAND_VOICES UNIQUE (id_band, id_voice)
+                            id uuid,
+                            id_band uuid NOT NULL,
+                            id_voice uuid NOT NULL,
+                            updated_at timestamp,
+                            created_at timestamp NOT NULL,
+                            CONSTRAINT PK_BAND_VOICES PRIMARY KEY (id),
+                            CONSTRAINT FK_BAND_VOICES_BAND FOREIGN KEY (id_band) REFERENCES bands(id),
+                            CONSTRAINT FK_BAND_VOICES_VOICE FOREIGN KEY (id_voice) REFERENCES voices(id),
+                            CONSTRAINT UNIQUE_BAND_VOICES UNIQUE (id_band, id_voice)
 
 );
 
 CREATE INDEX I_band_voices_band ON band_voices (id_band);
-CREATE INDEX I_band_voices_band ON band_voices (id_voice);
+CREATE INDEX I_band_voices_voices ON band_voices (id_voice);
 
 CREATE TABLE user_band
 (
@@ -70,14 +72,13 @@ CREATE TABLE user_band
     rol_id     uuid      NOT NULL,
     user_id    uuid      NOT NULL,
     band_id    uuid      NOT NULL,
-    voice_id   uuid,
+    voice_id   uuid      NOT NULL,
     updated_at timestamp,
     created_at timestamp NOT NULL,
     CONSTRAINT PK_USER_BAND PRIMARY KEY (id),
     CONSTRAINT FK_USER_BAND_ROL FOREIGN KEY (rol_id) references roles (id),
     CONSTRAINT FK_USER_BAND_USER FOREIGN KEY (user_id) references users (id),
-    CONSTRAINT FK_USER_BAND_BAND FOREIGN KEY (band_id) references bands (id),
-    CONSTRAINT FK_USER_BAND_VOICE FOREIGN KEY (voice_id) references voices(id),
+    CONSTRAINT FK_USER_BAND_VOICE FOREIGN KEY (band_id,voice_id) references band_voices(id_band,id_voice),
     CONSTRAINT UNIQUE_USER_BAND UNIQUE (user_id, band_id)
 
 );
@@ -95,13 +96,16 @@ CREATE TABLE codes
     code       varchar(15) NOT NULL UNIQUE,
     end_date   timestamp   NOT NULL,
     band_id    uuid        NOT NULL,
+    voice_id   uuid,
     updated_at timestamp,
     created_at timestamp   NOT NULL,
     CONSTRAINT PK_CODE PRIMARY KEY (id),
-    CONSTRAINT FK_CODE_BAND FOREIGN KEY (band_id) REFERENCES bands (id)
+    CONSTRAINT FK_CODE_VOICE FOREIGN KEY (band_id,voice_id) REFERENCES band_voices(id_band,id_voice)
 );
 
 CREATE INDEX I_codes_band ON codes (band_id);
+CREATE INDEX I_codes_voice ON codes (voice_id);
+
 
 CREATE TABLE instruments
 (
@@ -259,3 +263,18 @@ INSERT INTO roles(id, name, router, created_at)
 VALUES (gen_random_uuid(), 'DIRECTOR', 'directorRouter', now());
 
 
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Sin Voz',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Corneta 1º Quinto',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Corneta 1º Fuerte',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Corneta 1º Piano',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompeta 1º Fuerte',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompeta 1º Piano',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompeta 2º Piano',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompeta 2º Fuerte',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Tuba 1º',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Tuba 2º',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompa 1º',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Trompa 2º',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Tambor',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Caja',now());
+INSERT INTO voices(id,name,created_at) VALUES (gen_random_uuid(),'Bombo',now());

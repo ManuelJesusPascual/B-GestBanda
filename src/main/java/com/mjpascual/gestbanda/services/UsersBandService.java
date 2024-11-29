@@ -4,7 +4,9 @@ import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.dto.usersBand.CreateUsersBandRequest;
+import com.mjpascual.gestbanda.dto.usersBand.ModifyUsersBandRequest;
 import com.mjpascual.gestbanda.dto.usersBand.UsersBandResponse;
+import com.mjpascual.gestbanda.dto.voices.VoicesResponse;
 import com.mjpascual.gestbanda.entities.UsersBand;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
@@ -12,6 +14,7 @@ import com.mjpascual.gestbanda.repositories.UsersBandRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +33,6 @@ public class UsersBandService {
     private final UsersBandRepository usersBandRepository;
 
     private final RolesService rolesService;
-
-
 
     /**
      * Constructor for injecting UsersBandRepository dependency.
@@ -53,9 +54,7 @@ public class UsersBandService {
     @Transactional(rollbackOn = Exception.class)
     public UsersBand createUserInBand(CreateUsersBandRequest createUsersInBand) {
         UsersBand bandToSave = UsersBand.from(createUsersInBand);
-
         UsersBand userInBand = usersBandRepository.save(bandToSave);
-
         return userInBand;
     }
 
@@ -72,25 +71,58 @@ public class UsersBandService {
     }
 
     /**
+     * Finds all users associated with a specific band ID.
+     *
+     * @param bandUuid Unique identifier of the band.
+     * @return List of UsersBandResponse objects representing the user's band associations.
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public List<UsersBandResponse> findByBand(UUID bandUuid) {
+        List<UsersBand> userInBand = usersBandRepository.findByBandID(bandUuid);
+        return UsersBandResponse.from(userInBand);
+    }
+
+    /**
      * Inserts a new user-band relationship, assigning the "DIRECTOR" role to the user.
      *
      * @param band The saved band information.
+     * @param voice The voice information associated with the user.
      * @param user The user to associate with the band.
      */
-    public void insertUserBand(BandsResponse band, UsersResponse user) {
+    @Transactional(rollbackOn = Exception.class)
+    public void insertUserBand(BandsResponse band, VoicesResponse voice, UsersResponse user) {
         RolesResponse rolDirector = rolesService.searchRolByName("DIRECTOR");
-        UsersBand userBandCheck = usersBandRepository.findByUserBandID(user.getId(),band.getId());
+        UsersBand userBandCheck = usersBandRepository.findByUserBandID(user.getId(), band.getId());
 
-        if(!isNull(userBandCheck)){
+        if (!isNull(userBandCheck)) {
             throw new GestBandaException(new Exception(), "Este usuario ya se encuentra en esa banda", ErrorCodes.USER_ALREADY_IN_BAND);
         }
 
-        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, rolDirector,null);
+        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, rolDirector, voice);
         createUsersInBandRequest.validate();
 
         createUserInBand(createUsersInBandRequest);
     }
 
+    /**
+     * Modifies an existing user-band relationship based on the provided request.
+     *
+     * @param request The request containing the modifications to be made.
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public void modifyUserBand(ModifyUsersBandRequest request) {
+        usersBandRepository.updateUserVoice(request.getVoice_id(), request.getRole_id(), request.getUser_id(), request.getBand_id(), new Date());
+    }
 
-
+    /**
+     * Deletes a user-band association based on the user ID and band ID.
+     *
+     * @param idUser Unique identifier of the user.
+     * @param idBand Unique identifier of the band.
+     */
+    @Transactional(rollbackOn = Exception.class)
+    public void deleteUserBand(UUID idUser, UUID idBand) {
+        UsersBand userBand = usersBandRepository.findByUserBandID(idUser, idBand);
+        usersBandRepository.delete(userBand);
+    }
 }
