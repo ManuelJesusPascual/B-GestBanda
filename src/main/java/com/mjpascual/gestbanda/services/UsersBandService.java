@@ -54,9 +54,7 @@ public class UsersBandService {
     public UsersBand createUserInBand(CreateUsersBandRequest createUsersInBand) {
         UsersBand bandToSave = UsersBand.from(createUsersInBand);
 
-        UsersBand userInBand = usersBandRepository.save(bandToSave);
-
-        return userInBand;
+        return usersBandRepository.save(bandToSave);
     }
 
     /**
@@ -77,6 +75,7 @@ public class UsersBandService {
      * @param band The saved band information.
      * @param user The user to associate with the band.
      */
+    @Transactional(rollbackOn = Exception.class)
     public void insertUserBand(BandsResponse band, UsersResponse user) {
         RolesResponse rolDirector = rolesService.searchRolByName("DIRECTOR");
         UsersBand userBandCheck = usersBandRepository.findByUserBandID(user.getId(),band.getId());

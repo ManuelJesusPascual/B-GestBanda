@@ -30,7 +30,6 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UsersBandService usersBandService;
 
     /**
      * Constructs a new UsersService instance with dependencies injected.
@@ -38,12 +37,10 @@ public class UsersService {
      *
      * @param usersRepository Repository for accessing user data
      * @param passwordEncoder Encoder for encoding user passwords
-     * @param usersBandService Service for managing user-band relationships
      */
     public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, UsersBandService usersBandService) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
-        this.usersBandService = usersBandService;
     }
 
     /**
@@ -116,7 +113,7 @@ public class UsersService {
      * @param id UUID of the user to find
      * @return UsersResponse representing the user's information
      */
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public UsersResponse findUser(UUID id) {
         Users user = usersRepository.findById(id).orElseThrow(() -> new GestBandaException(new Exception(), "Usuario no encontrado", ErrorCodes.USER_NOT_FOUND));
         return UsersResponse.from(user);
@@ -129,6 +126,7 @@ public class UsersService {
      * @param usersResponse UsersResponse containing user details to validate
      * @return UsersResponse with confirmed user information
      */
+    @Transactional
     public UsersResponse checkUser(UsersResponse usersResponse) {
         UsersResponse user;
         try {
