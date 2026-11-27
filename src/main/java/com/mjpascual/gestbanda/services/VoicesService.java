@@ -44,6 +44,9 @@ public class VoicesService {
     public VoicesResponse findVoiceByName(String name) {
         VoicesResponse response;
         Voices voice = voicesRepository.findVoiceByName(name);
+        if (isNull(voice)) {
+            throw new GestBandaException(new Exception(), "Voz no encontrada", ErrorCodes.VOICE_NOT_FOUND);
+        }
         response = VoicesResponse.from(voice);
         return response;
     }
@@ -59,7 +62,7 @@ public class VoicesService {
     public VoicesResponse findVoiceById(UUID id) {
         VoicesResponse response;
         Voices voice = voicesRepository.findById(id)
-                .orElseThrow(() -> new GestBandaException(new Exception(), "Voz no encontrada", ErrorCodes.BAND_NOT_FOUND));
+                .orElseThrow(() -> new GestBandaException(new Exception(), "Voz no encontrada", ErrorCodes.VOICE_NOT_FOUND));
         response = VoicesResponse.from(voice);
         return response;
     }

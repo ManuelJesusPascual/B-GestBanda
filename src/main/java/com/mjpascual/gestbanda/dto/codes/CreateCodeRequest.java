@@ -27,6 +27,9 @@ public class CreateCodeRequest implements IValidator {
      */
     @Override
     public void verifyNulls() {
+        if (isNull(voice_id)) {
+            throw new GestBandaException(new Exception(), "No se ha proporcionado una voz", ErrorCodes.ARGUMENT_NOT_VALID);
+        }
         if (isNull(end_date)) {
             throw new GestBandaException(new Exception(), "No se ha proporcionado una fecha de fin", ErrorCodes.ARGUMENT_NOT_VALID);
         }

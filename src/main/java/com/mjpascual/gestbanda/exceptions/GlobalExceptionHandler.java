@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Calendar;
@@ -68,7 +69,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Method that handles general application exceptions (Exception)
+     * A path or query parameter with the wrong type (for example an invalid UUID) is a client error.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDetailed> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        ErrorDetailed errorDetails =
+                new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(),
+                        "El parámetro '" + exception.getName() + "' no es válido", ErrorCodes.ARGUMENT_NOT_VALID.getCode());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Method that handles general application exceptions (Exception).
+     * The internal message is logged, never returned to the client.
      *
      * @param exception  Exception thrown by the application
      * @param webRequest Web request
@@ -81,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Exception exception, WebRequest webRequest) {
         log.error("Unexpected error on {}", webRequest.getDescription(false), exception);
         ErrorDetailed errorDetails =
-                new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), exception.getMessage(),
+                new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), "Error interno del servidor",
                         ErrorCodes.GENERIC_ERROR.getCode());
 
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
