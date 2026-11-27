@@ -91,7 +91,7 @@ public class BandsService {
         bandVoicesRepository.save(bandVoice);
 
         // Insert the user into the band
-        usersBandService.insertUserBand(savedBand, sinVoz, user);
+        usersBandService.insertUserBand(savedBand, sinVoz, user, UsersBandService.ROLE_DIRECTOR);
 
         return savedBand;
     }

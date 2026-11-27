@@ -27,6 +27,10 @@ import static java.util.Objects.isNull;
 @Service
 public class UsersBandService {
 
+    public static final String ROLE_DIRECTOR = "DIRECTOR";
+    public static final String ROLE_VOICE_LEADER = "JEFE DE VOZ";
+    public static final String ROLE_MEMBER = "COMPONENTE";
+
     /**
      * Repository for performing CRUD operations on UsersBand entity.
      */
@@ -83,22 +87,23 @@ public class UsersBandService {
     }
 
     /**
-     * Inserts a new user-band relationship, assigning the "DIRECTOR" role to the user.
+     * Inserts a new user-band relationship with the given role.
      *
      * @param band The saved band information.
      * @param voice The voice information associated with the user.
      * @param user The user to associate with the band.
+     * @param roleName Name of the role the user gets in the band.
      */
     @Transactional(rollbackOn = Exception.class)
-    public void insertUserBand(BandsResponse band, VoicesResponse voice, UsersResponse user) {
-        RolesResponse rolDirector = rolesService.searchRolByName("DIRECTOR");
+    public void insertUserBand(BandsResponse band, VoicesResponse voice, UsersResponse user, String roleName) {
+        RolesResponse role = rolesService.searchRolByName(roleName);
         UsersBand userBandCheck = usersBandRepository.findByUserBandID(user.getId(), band.getId());
 
         if (!isNull(userBandCheck)) {
             throw new GestBandaException(new Exception(), "Este usuario ya se encuentra en esa banda", ErrorCodes.USER_ALREADY_IN_BAND);
         }
 
-        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, rolDirector, voice);
+        CreateUsersBandRequest createUsersInBandRequest = new CreateUsersBandRequest(band, user, role, voice);
         createUsersInBandRequest.validate();
 
         createUserInBand(createUsersInBandRequest);

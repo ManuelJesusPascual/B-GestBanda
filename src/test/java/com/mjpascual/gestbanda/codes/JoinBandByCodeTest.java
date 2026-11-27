@@ -26,6 +26,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -153,7 +155,7 @@ class JoinBandByCodeTest {
         request.setUser(user);
 
         when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
-        doNothing().when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
+        doNothing().when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), anyString());
 
         // Act
         BandsResponse response = codesService.joinBandByCode(request);
@@ -162,7 +164,7 @@ class JoinBandByCodeTest {
         assertNotNull(response);
         verify(codesRepository).findByCode(VALID_CODE);
         verify(usersService).checkUser(any(UsersResponse.class));
-        verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
+        verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), eq(UsersBandService.ROLE_MEMBER));
     }
 
     /**
@@ -212,14 +214,14 @@ class JoinBandByCodeTest {
 
         when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
         doThrow(new GestBandaException(new Exception(), "Usuario ya en la banda", ErrorCodes.USER_ALREADY_IN_BAND))
-                .when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
+                .when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), anyString());
 
         try {
             codesService.joinBandByCode(request);
             fail("Expected GestBandaException to be thrown");
         } catch (GestBandaException e) {
             assertEquals(ErrorCodes.USER_ALREADY_IN_BAND, e.getCode());
-            verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
+            verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), anyString());
         }
     }
 }

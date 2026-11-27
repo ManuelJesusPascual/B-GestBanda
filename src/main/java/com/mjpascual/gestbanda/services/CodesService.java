@@ -98,7 +98,7 @@ public class CodesService {
         VoicesResponse voice = VoicesResponse.from(codeInfo.getVoice_id());
 
         UsersResponse user = usersService.checkUser(request.getUser());
-        usersBandService.insertUserBand(band, voice, user);
+        usersBandService.insertUserBand(band, voice, user, UsersBandService.ROLE_MEMBER);
 
         return band;
     }
