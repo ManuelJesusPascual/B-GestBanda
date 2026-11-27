@@ -38,7 +38,7 @@ public class UsersService {
      * @param usersRepository Repository for accessing user data
      * @param passwordEncoder Encoder for encoding user passwords
      */
-    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, UsersBandService usersBandService) {
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }

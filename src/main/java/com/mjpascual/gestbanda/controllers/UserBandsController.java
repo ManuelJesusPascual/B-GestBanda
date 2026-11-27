@@ -23,10 +23,8 @@ import java.util.UUID;
 @RequestMapping("/api/userBands")
 public class UserBandsController {
 
-    // Service instance for user-band operations
     private final UsersBandService usersBandService;
 
-    // Constructor for UserBandsController
     public UserBandsController(UsersBandService usersBandService) {
         this.usersBandService = usersBandService;
     }
@@ -39,9 +37,7 @@ public class UserBandsController {
      */
     @GetMapping(value = "/getUserBands")
     public ResponseEntity<List<UsersBandResponse>> getUserBands(@RequestParam("id") UUID userId) {
-        // Fetching the list of bands for the specified user
         List<UsersBandResponse> res = usersBandService.findByUser(userId);
-        // Returning the response with the status OK
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
@@ -53,9 +49,7 @@ public class UserBandsController {
      */
     @GetMapping(value = "/getBandUsers")
     public ResponseEntity<List<UsersBandResponse>> getBandUsers(@RequestParam("id") UUID bandId) {
-        // Fetching the list of users for the specified band
         List<UsersBandResponse> res = usersBandService.findByBand(bandId);
-        // Returning the response with the status OK
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
@@ -66,9 +60,7 @@ public class UserBandsController {
      */
     @PutMapping("/modifyUserBand")
     public void modifyUserBand(@RequestBody ModifyUsersBandRequest request) {
-        // Validating the request data
         request.validate();
-        // Modifying the user-band association
         usersBandService.modifyUserBand(request);
     }
 
@@ -80,7 +72,6 @@ public class UserBandsController {
      */
     @DeleteMapping(value = "/deleteUserBand")
     public void deleteBandCode(@RequestParam("idUser") UUID idUser, @RequestParam("idBand") UUID idBand) {
-        // Deleting the user-band association
         usersBandService.deleteUserBand(idUser,idBand);
     }
 

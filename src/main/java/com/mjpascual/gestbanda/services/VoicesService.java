@@ -30,7 +30,7 @@ public class VoicesService {
      * @param usersBandService The service to manage users associated with bands.
      */
     @Autowired
-    public VoicesService(VoicesRepository voicesRepository, UsersBandService usersBandService) {
+    public VoicesService(VoicesRepository voicesRepository) {
         this.voicesRepository = voicesRepository;
     }
 

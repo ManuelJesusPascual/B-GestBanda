@@ -34,15 +34,15 @@ import static java.util.Objects.isNull;
 @Service
 public class BandsService {
 
-    private final BandsRepository bandsRepository; // Repository for Bands entity
+    private final BandsRepository bandsRepository;
 
-    private final UsersBandService usersBandService; // Service for managing users in bands
+    private final UsersBandService usersBandService;
 
-    private final UsersService usersService; // Service for managing users
+    private final UsersService usersService;
 
-    private final ImgService imgService; // Service for managing images
-    private final VoicesRepository voicesRepository; // Repository for Voices entity
-    private final BandVoicesRepository bandVoicesRepository; // Repository for BandVoices entity
+    private final ImgService imgService;
+    private final VoicesRepository voicesRepository;
+    private final BandVoicesRepository bandVoicesRepository;
 
 
     /**
@@ -55,12 +55,12 @@ public class BandsService {
      */
     @Autowired
     public BandsService(BandsRepository bandsRepository, UsersBandService usersBandService, UsersService usersService, ImgService imgService, VoicesRepository voicesRepository, BandVoicesRepository bandVoicesRepository) {
-        this.bandsRepository = bandsRepository; // Initializing bands repository
-        this.usersBandService = usersBandService; // Initializing users band service
-        this.usersService = usersService; // Initializing users service
-        this.imgService = imgService; // Initializing image service
-        this.voicesRepository = voicesRepository; // Initializing voices repository
-        this.bandVoicesRepository = bandVoicesRepository; // Initializing band voices repository
+        this.bandsRepository = bandsRepository;
+        this.usersBandService = usersBandService;
+        this.usersService = usersService;
+        this.imgService = imgService;
+        this.voicesRepository = voicesRepository;
+        this.bandVoicesRepository = bandVoicesRepository;
     }
 
     /**
@@ -93,7 +93,7 @@ public class BandsService {
         // Insert the user into the band
         usersBandService.insertUserBand(savedBand, sinVoz, user);
 
-        return savedBand; // Return the saved band response
+        return savedBand;
     }
 
     /**
@@ -106,7 +106,7 @@ public class BandsService {
     @Transactional(rollbackOn = Exception.class)
     public BandsResponse findBandById(UUID bandUuid) {
         Bands band = bandsRepository.findById(bandUuid).orElseThrow(() -> new GestBandaException(new Exception(), "Banda no encontrada", ErrorCodes.BAND_NOT_FOUND));
-        return BandsResponse.from(band); // Return the found band response
+        return BandsResponse.from(band);
     }
 
 }

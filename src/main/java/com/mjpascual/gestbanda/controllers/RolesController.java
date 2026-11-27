@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/roles")
 public class RolesController {
 
-    private RolesService rolesService; // Service to handle role-related business logic
+    private RolesService rolesService;
 
     /**
      * Constructor for RolesController.
@@ -27,7 +27,7 @@ public class RolesController {
      * @param rolesService the service used to manage roles
      */
     public RolesController(RolesService rolesService) {
-        this.rolesService = rolesService; // Initialize the roles service
+        this.rolesService = rolesService;
     }
 
     /**
@@ -37,10 +37,10 @@ public class RolesController {
      */
     @GetMapping(value = "/getAllRoles")
     public ResponseEntity<List<RolesResponse>> getAllRoles() {
-        List<RolesResponse> response; // Variable to hold the list of roles
+        List<RolesResponse> response;
 
-        response = rolesService.getAllRoles(); // Fetch all roles using the service
+        response = rolesService.getAllRoles();
 
-        return new ResponseEntity<>(response, HttpStatus.OK); // Return the response with HTTP status OK
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

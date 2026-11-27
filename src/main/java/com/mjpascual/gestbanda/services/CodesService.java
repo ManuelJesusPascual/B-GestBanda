@@ -30,12 +30,12 @@ import static java.util.Objects.isNull;
 @Service
 public class CodesService {
 
-    private final CodesRepository codesRepository; // Repository for managing access codes
-    private final UsersBandService usersBandService; // Service for managing user-band associations
-    private final VoicesService voicesService; // Service for searching voices
-    private final UsersService usersService; // Service for user-related operations
-    private final BandsService bandsService; // Service for managing bands
-    private final BandVoicesService bandVoicesService; // Service for managing band voices
+    private final CodesRepository codesRepository;
+    private final UsersBandService usersBandService;
+    private final VoicesService voicesService;
+    private final UsersService usersService;
+    private final BandsService bandsService;
+    private final BandVoicesService bandVoicesService;
 
     /**
      * Constructs a new instance of CodesService with the necessary dependencies.
@@ -68,7 +68,7 @@ public class CodesService {
     @Transactional(rollbackOn = Exception.class)
     public Codes getCode(String code) {
 
-        Codes codeInfo = codesRepository.findByCode(code); // Fetch code information from the repository
+        Codes codeInfo = codesRepository.findByCode(code);
 
         // Check if the code is null (not found) and throw an exception if so
         if (codeInfo == null) {
@@ -79,7 +79,7 @@ public class CodesService {
             throw new GestBandaException(new Exception(), "Ese codigo ha expirado. Por favor contacta con el director de la banda", ErrorCodes.CODE_EXPIRED);
         }
 
-        return codeInfo; // Return the found code information
+        return codeInfo;
     }
 
     /**
@@ -93,14 +93,14 @@ public class CodesService {
     @Transactional(rollbackOn = Exception.class)
     public BandsResponse joinBandByCode(JoinBandRequest request) {
 
-        Codes codeInfo = getCode(request.getCode()); // Validate the code and get associated info
-        BandsResponse band = BandsResponse.from(codeInfo.getBand_id()); // Create BandsResponse from band ID
-        VoicesResponse voice = VoicesResponse.from(codeInfo.getVoice_id()); // Create VoicesResponse from voice ID
+        Codes codeInfo = getCode(request.getCode());
+        BandsResponse band = BandsResponse.from(codeInfo.getBand_id());
+        VoicesResponse voice = VoicesResponse.from(codeInfo.getVoice_id());
 
-        UsersResponse user = usersService.checkUser(request.getUser()); // Validate the user
-        usersBandService.insertUserBand(band, voice, user); // Associate user with the band
+        UsersResponse user = usersService.checkUser(request.getUser());
+        usersBandService.insertUserBand(band, voice, user);
 
-        return band; // Return the band that the user has joined
+        return band;
     }
 
     /**
@@ -111,8 +111,8 @@ public class CodesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<CodesResponse> getBandCodes(UUID bandID) {
-        List<Codes> bandCodes = codesRepository.findBandCodes(bandID); // Fetch codes for the specified band
-        return CodesResponse.from(bandCodes); // Return the list of codes as CodesResponse
+        List<Codes> bandCodes = codesRepository.findBandCodes(bandID);
+        return CodesResponse.from(bandCodes);
     }
 
     /**
@@ -123,12 +123,12 @@ public class CodesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public void deleteBandCode(UUID idCode) {
-        Codes code = codesRepository.checkIfExist(idCode); // Check if the code exists
+        Codes code = codesRepository.checkIfExist(idCode);
         // If the code is null, throw an exception indicating it was not found
         if (isNull(code)) {
             throw new GestBandaException(new Exception(), "No se ha encontrado ese código en la banda", ErrorCodes.ARGUMENT_NOT_VALID);
         }
-        codesRepository.delete(code); // Delete the found code from the repository
+        codesRepository.delete(code);
     }
 
     /**
@@ -138,21 +138,21 @@ public class CodesService {
      * @return CodesResponse containing the details of the created code
      */
     public CodesResponse createBandCode(CreateCodeRequest request) {
-        VoicesResponse voice = null; // Initialize the voice response
-        BandsResponse band = bandsService.findBandById(request.getBand_id()); // Get the band by ID
-        voice = voicesService.findVoiceById(request.getVoice_id()); // Get the voice by ID
+        VoicesResponse voice = null;
+        BandsResponse band = bandsService.findBandById(request.getBand_id());
+        voice = voicesService.findVoiceById(request.getVoice_id());
 
-        Codes code; // Variable to hold the new code
+        Codes code;
 
-        Codes codeExist; // Variable to check for existing codes
+        Codes codeExist;
         // Generate a new code and check for duplicates
         do {
-            code = Codes.from(request, voice, band); // Create a new code from the request
-            codeExist = codesRepository.checkIfExistByCode(code.getCode()); // Check if the code already exists
-        } while (!isNull(codeExist)); // Continue until a unique code is generated
+            code = Codes.from(request, voice, band);
+            codeExist = codesRepository.checkIfExistByCode(code.getCode());
+        } while (!isNull(codeExist));
 
-        Codes savedCode = codesRepository.save(code); // Save the new code to the repository
-        return CodesResponse.from(savedCode); // Return the saved code as CodesResponse
+        Codes savedCode = codesRepository.save(code);
+        return CodesResponse.from(savedCode);
     }
 
     /**
@@ -164,21 +164,21 @@ public class CodesService {
      */
     public CodesResponse updateBandCode(UpdateCodeRequest request) {
 
-        Codes code; // Variable to hold the code to be updated
+        Codes code;
 
         // Fetch the existing code by ID, throwing an exception if not found
         code = codesRepository.findById(request.getId()).orElseThrow(() -> new GestBandaException(new Exception(), "Código no encontrado", ErrorCodes.CODE_NOT_FOUND));
 
-        Voices voice; // Variable to hold the voice to be associated with the code
+        Voices voice;
 
         // Check if the voice exists in the band and get its ID
         voice = bandVoicesService.voiceExistInBand(request.getVoice_id(), request.getBand_id()).getId_voice();
 
-        code.setVoice_id(voice); // Set the new voice ID on the code
-        code.setUpdated_at(new Date()); // Update the timestamp for the code
-        code.setEndDate(request.getEnd_date()); // Set the new end date for the code
+        code.setVoice_id(voice);
+        code.setUpdated_at(new Date());
+        code.setEndDate(request.getEnd_date());
 
-        Codes savedCode = codesRepository.save(code); // Save the updated code to the repository
-        return CodesResponse.from(savedCode); // Return the updated code as CodesResponse
+        Codes savedCode = codesRepository.save(code);
+        return CodesResponse.from(savedCode);
     }
 }
