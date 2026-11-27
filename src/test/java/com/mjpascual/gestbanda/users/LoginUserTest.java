@@ -51,7 +51,7 @@ class LoginUserTest {
         // Initialize the mocks annotated in this class
         MockitoAnnotations.openMocks(this);
         // Create a new instance of the filter
-        jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService, new TokenUtils("test-secret-key-that-is-at-least-32-bytes-long"));
+        jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService, new TokenUtils("test-secret-key-that-is-at-least-32-bytes-long"), new ObjectMapper());
         // Set the mock AuthenticationManager in the filter
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
     }

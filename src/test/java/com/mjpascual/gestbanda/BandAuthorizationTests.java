@@ -105,6 +105,15 @@ class BandAuthorizationTests {
     }
 
     @Test
+    void failedLoginReturnsTheUsualErrorBodyWithAnIsoDate() throws Exception {
+        String body = json.writeValueAsString(Map.of("email", "nobody@example.com", "password", "Password1!"));
+        mvc.perform(post("/api/users/login").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value(3))
+                .andExpect(jsonPath("$.timeMark").isString());
+    }
+
+    @Test
     void joiningWithACodeGivesTheMemberRole() throws Exception {
         JsonNode members = body(mvc.perform(as(director, get("/api/userBands/getBandUsers").param("id", bandId)))
                 .andExpect(status().isOk()).andReturn());

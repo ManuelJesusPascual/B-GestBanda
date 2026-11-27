@@ -66,6 +66,12 @@ Before: `403` with an empty body. Now: `401` with the usual error body (`code: 1
 Codes are zero-padded (for example `004821`). Before, codes below 100000 had fewer digits and
 `joinBandByCode` rejected them, because it requires exactly six.
 
+## 7. Login errors use an ISO date
+
+`POST /api/users/login` errors (wrong credentials, unreadable body) returned `timeMark` as a number
+(epoch milliseconds, for example `1795810700469`). Now it is an ISO string like every other error:
+`"2026-11-27T19:40:11.714+00:00"`. The rest of the body does not change.
+
 ## No change needed
 
 - Sprint 3 endpoints (`/api/bandVoices/*`, `/api/codes/*` CRUD, `modifyUserBand`, `deleteUserBand`, `getAllRoles`) are now in `main` with the same contract as the `01112024-LogicaGestionComponentes` branch.

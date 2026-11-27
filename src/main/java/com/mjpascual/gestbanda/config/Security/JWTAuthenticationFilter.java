@@ -31,8 +31,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final UsersService usersService;
     private final TokenUtils tokenUtils;
+    private final ObjectMapper objectMapper;
 
-    public JWTAuthenticationFilter(UsersService usersService, TokenUtils tokenUtils) {
+    public JWTAuthenticationFilter(UsersService usersService, TokenUtils tokenUtils, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         this.usersService = usersService;
         this.tokenUtils = tokenUtils;
     }
@@ -48,7 +50,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         AuthCredentials authCredentials = new AuthCredentials();
 
         try {
-            authCredentials = new ObjectMapper().readValue(request.getReader(), AuthCredentials.class);
+            authCredentials = objectMapper.readValue(request.getReader(), AuthCredentials.class);
 
         } catch (IOException e) {
             ErrorDetailed errorDetails =
@@ -59,9 +61,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-            ObjectMapper mapper = new ObjectMapper();
             try {
-                response.getWriter().write(mapper.writeValueAsString(errorDetails));
+                response.getWriter().write(objectMapper.writeValueAsString(errorDetails));
                 response.getWriter().flush();
 
             } catch (IOException ex) {
@@ -98,8 +99,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ObjectMapper mapper = new ObjectMapper();
-        response.getWriter().write(mapper.writeValueAsString(user));
+        response.getWriter().write(objectMapper.writeValueAsString(user));
 
 
         response.getWriter().flush();
@@ -125,8 +125,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ObjectMapper mapper = new ObjectMapper();
-        response.getWriter().write(mapper.writeValueAsString(errorDetails));
+        response.getWriter().write(objectMapper.writeValueAsString(errorDetails));
 
 
         response.getWriter().flush();
