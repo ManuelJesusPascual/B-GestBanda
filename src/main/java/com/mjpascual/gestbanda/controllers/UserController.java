@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.controllers;
 
+import com.mjpascual.gestbanda.config.Security.TokenUtils;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.services.UsersService;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static com.mjpascual.gestbanda.config.Security.TokenUtils.createToken;
 
 /**
  * Controller for the Users entity
@@ -18,10 +18,12 @@ import static com.mjpascual.gestbanda.config.Security.TokenUtils.createToken;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private UsersService usersService;
+    private final UsersService usersService;
+    private final TokenUtils tokenUtils;
 
-    public UserController(UsersService usersService) {
+    public UserController(UsersService usersService, TokenUtils tokenUtils) {
         this.usersService = usersService;
+        this.tokenUtils = tokenUtils;
     }
 
     /**
@@ -43,7 +45,7 @@ public class UserController {
          * Insert token into headers
          */
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + createToken(response.getEmail()));
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + tokenUtils.createToken(response.getEmail()));
 
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }

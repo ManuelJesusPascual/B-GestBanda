@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.users;
 
+import com.mjpascual.gestbanda.config.Security.TokenUtils;
 import com.mjpascual.gestbanda.controllers.UserController;
 import com.mjpascual.gestbanda.dto.users.CreateUserRequest;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,9 @@ class RegisterUserTest {
 
     @Mock
     private UsersService usersService;
+
+    @Spy
+    private TokenUtils tokenUtils = new TokenUtils("test-secret-key-that-is-at-least-32-bytes-long");
 
     @InjectMocks
     private UserController userController;

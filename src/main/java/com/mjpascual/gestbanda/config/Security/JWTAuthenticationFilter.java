@@ -28,10 +28,11 @@ import java.util.TimeZone;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UsersService usersService;
+    private final TokenUtils tokenUtils;
 
-    // Constructor to inject UsersService
-    public JWTAuthenticationFilter(UsersService usersService) {
+    public JWTAuthenticationFilter(UsersService usersService, TokenUtils tokenUtils) {
         this.usersService = usersService;
+        this.tokenUtils = tokenUtils;
     }
 
     /**
@@ -86,7 +87,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
 
-        String token = TokenUtils.createToken(userDetails.getUsername());
+        String token = tokenUtils.createToken(userDetails.getUsername());
 
         UsersResponse user = usersService.getLoginInfo(userDetails.getUsername());
 

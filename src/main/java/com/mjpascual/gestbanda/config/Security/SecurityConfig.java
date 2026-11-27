@@ -28,6 +28,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailService;
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
     private final UsersService usersService;
+    private final TokenUtils tokenUtils;
 
     /**
      * When an HTTP request arrives, the first thing it must pass through is the various filters defined in our
@@ -40,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authManager, JWTAuthorizationFilter jWTAuthorizationFilter) throws Exception {
 
-        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService);
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(usersService, tokenUtils);
         jwtAuthenticationFilter.setAuthenticationManager(authManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/api/users/login");
 

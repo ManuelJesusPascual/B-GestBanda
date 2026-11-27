@@ -21,6 +21,12 @@ import static org.springframework.util.StringUtils.hasText;
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    private final TokenUtils tokenUtils;
+
+    public JWTAuthorizationFilter(TokenUtils tokenUtils) {
+        this.tokenUtils = tokenUtils;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String Bearertoken = getTokenFromRequest(request);
@@ -28,7 +34,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         if (!isNull(Bearertoken)) {
 
             String token = Bearertoken.replace("Bearer ", "");
-            UsernamePasswordAuthenticationToken usernamePAT = TokenUtils.getAuthentication(token);
+            UsernamePasswordAuthenticationToken usernamePAT = tokenUtils.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(usernamePAT);
 
         }
