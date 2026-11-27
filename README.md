@@ -180,6 +180,12 @@ Errors always have the same shape:
 
 Unit tests cover sign-up and login validation, band registration and joining by code. Integration tests run the API against PostgreSQL with Testcontainers and check the permissions of each role, the `401`/`403`/`404` responses and the role given when joining. Docker must be running.
 
+## Known limitations
+
+- **Long-lived tokens, no refresh or revocation.** A JWT is valid for 30 days and cannot be revoked before it expires. A production version would use short-lived access tokens with refresh tokens.
+- **Manual input validation.** Each request DTO validates itself in a `validate()` method instead of using Bean Validation (`@Valid`, `@NotNull`...). It works and returns clear messages, but it is more code than the standard approach.
+- **Image hosting depends on Imgur.** Registering a band fails (`424`) without `IMGUR_CLIENT_ID`.
+
 ## Roadmap
 
 - Instruments: band inventory and instruments assigned to each member.

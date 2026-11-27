@@ -180,6 +180,12 @@ Los errores siempre tienen la misma forma:
 
 Los tests unitarios cubren la validación del registro y el login, el registro de bandas y la unión por código. Los tests de integración ejecutan la API contra PostgreSQL con Testcontainers y comprueban los permisos de cada rol, las respuestas `401`/`403`/`404` y el rol que se asigna al unirse. Docker tiene que estar en marcha.
 
+## Limitaciones conocidas
+
+- **Tokens de larga duración, sin refresco ni revocación.** Un JWT es válido durante 30 días y no se puede revocar antes de que caduque. Una versión para producción usaría tokens de acceso de corta duración con tokens de refresco.
+- **Validación manual de las entradas.** Cada DTO de petición se valida a sí mismo con un método `validate()` en lugar de usar Bean Validation (`@Valid`, `@NotNull`...). Funciona y devuelve mensajes claros, pero supone más código que el enfoque estándar.
+- **El alojamiento de imágenes depende de Imgur.** Sin `IMGUR_CLIENT_ID`, registrar una banda falla (`424`).
+
 ## Roadmap
 
 - Instrumentos: inventario de la banda e instrumentos asignados a cada componente.
