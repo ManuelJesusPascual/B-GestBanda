@@ -1,6 +1,10 @@
 package com.mjpascual.gestbanda.config.Security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mjpascual.gestbanda.exceptions.ErrorCodes;
+import com.mjpascual.gestbanda.exceptions.ErrorDetailed;
 import com.mjpascual.gestbanda.services.UsersService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +20,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Date;
 
 @Configuration
 @EnableWebSecurity
@@ -29,6 +36,7 @@ public class SecurityConfig {
     private final JWTAuthorizationFilter jwtAuthorizationFilter;
     private final UsersService usersService;
     private final TokenUtils tokenUtils;
+    private final ObjectMapper objectMapper;
 
     /**
      * When an HTTP request arrives, the first thing it must pass through is the various filters defined in our
@@ -55,7 +63,21 @@ public class SecurityConfig {
                 })
                 .addFilter(jwtAuthenticationFilter)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(unauthorizedEntryPoint()))
                 .build();
+    }
+
+    /**
+     * Requests without a valid token get a 401 with the same JSON body as any other error.
+     */
+    private AuthenticationEntryPoint unauthorizedEntryPoint() {
+        return (request, response, authException) -> {
+            ErrorDetailed error = new ErrorDetailed(new Date(), "Necesitas iniciar sesión", ErrorCodes.UNAUTHORIZED.getCode());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            objectMapper.writeValue(response.getWriter(), error);
+        };
     }
 
     /**
