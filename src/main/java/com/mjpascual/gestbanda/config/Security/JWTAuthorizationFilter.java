@@ -23,17 +23,17 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final TokenUtils tokenUtils;
 
+    private static final String BEARER_PREFIX = "Bearer ";
+
     public JWTAuthorizationFilter(TokenUtils tokenUtils) {
         this.tokenUtils = tokenUtils;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String Bearertoken = getTokenFromRequest(request);
+        final String token = getTokenFromRequest(request);
 
-        if (!isNull(Bearertoken)) {
-
-            String token = Bearertoken.replace("Bearer ", "");
+        if (!isNull(token)) {
             UsernamePasswordAuthenticationToken usernamePAT = tokenUtils.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(usernamePAT);
 
@@ -42,17 +42,21 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Method that will retrieve the token from the request
+     * Method that will retrieve the token from the request. Accepts both "Bearer &lt;token&gt;"
+     * and the raw token, which is what the mobile app sends.
      * @param request HTTP request
      * @return If a token exists, it will return it. If not, it will return null.
      */
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (hasText(authorization) && authorization.startsWith("Bearer ")) {
-            return authorization.substring(7);
+        if (!hasText(authorization)) {
+            return null;
         }
-        return null;
+        String value = authorization.trim();
+        return value.regionMatches(true, 0, BEARER_PREFIX, 0, BEARER_PREFIX.length())
+                ? value.substring(BEARER_PREFIX.length()).trim()
+                : value;
     }
 
 }

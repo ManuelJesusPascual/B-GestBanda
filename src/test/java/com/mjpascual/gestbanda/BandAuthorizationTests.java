@@ -115,6 +115,20 @@ class BandAuthorizationTests {
     }
 
     @Test
+    void tokenIsAcceptedWithAndWithoutTheBearerPrefix() throws Exception {
+        String rawToken = director.token().substring("Bearer ".length());
+
+        mvc.perform(get("/api/roles/getAllRoles").header(HttpHeaders.AUTHORIZATION, "Bearer " + rawToken))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/roles/getAllRoles").header(HttpHeaders.AUTHORIZATION, rawToken))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/roles/getAllRoles").header(HttpHeaders.AUTHORIZATION, "bearer " + rawToken))
+                .andExpect(status().isOk());
+        mvc.perform(get("/api/roles/getAllRoles").header(HttpHeaders.AUTHORIZATION, "not-a-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void joiningWithACodeGivesTheMemberRole() throws Exception {
         JsonNode members = body(mvc.perform(as(director, get("/api/userBands/getBandUsers").param("id", bandId)))
                 .andExpect(status().isOk()).andReturn());
