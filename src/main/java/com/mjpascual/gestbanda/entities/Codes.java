@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +20,8 @@ import java.util.UUID;
 @Builder
 @Table(name = "codes")
 public class Codes {
+
+    private static final SecureRandom RANDOM = new SecureRandom();
     @Id
     @GeneratedValue
     @Column(name = "id")
@@ -47,7 +49,7 @@ public class Codes {
 
     public static Codes from(CreateCodeRequest codeRequest, VoicesResponse voice, BandsResponse band) {
         return Codes.builder()
-                .code(String.valueOf(new Random().nextInt(1000000)))
+                .code(String.valueOf(RANDOM.nextInt(1000000)))
                 .endDate(codeRequest.getEnd_date())
                 .voice_id(voice != null ? Voices.from(voice) : null)
                 .band_id(Bands.from(band))
