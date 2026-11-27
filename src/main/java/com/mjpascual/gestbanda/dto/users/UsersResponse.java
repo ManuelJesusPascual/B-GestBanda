@@ -1,9 +1,6 @@
 package com.mjpascual.gestbanda.dto.users;
 
 import com.mjpascual.gestbanda.dto.usersBand.UsersBandResponse;
-import com.mjpascual.gestbanda.entities.UserGoTravel;
-import com.mjpascual.gestbanda.entities.UserHasClothes;
-import com.mjpascual.gestbanda.entities.UserHasInstruments;
 import com.mjpascual.gestbanda.entities.Users;
 import lombok.*;
 

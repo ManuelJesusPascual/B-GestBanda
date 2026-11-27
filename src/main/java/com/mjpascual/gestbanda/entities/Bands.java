@@ -48,12 +48,6 @@ public class Bands {
     @OneToMany(mappedBy = "band_id", fetch = FetchType.LAZY)
     private List<Codes> codes;
 
-    @Transient
-    private List<BandHasClothes> bandHasClothes;
-
-    @Transient
-    private List<BandHasInstruments> bandHasInstruments;
-
     public static Bands from(CreateBandRequest createBandRequest) {
         return Bands.builder()
                 .name(createBandRequest.getName())

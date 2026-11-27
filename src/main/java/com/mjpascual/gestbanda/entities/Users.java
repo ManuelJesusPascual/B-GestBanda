@@ -44,15 +44,6 @@ public class Users {
     @Transient
     private List<UsersBand> usersBand;
 
-    @Transient
-    private List<UserGoTravel> userGoTravel;
-
-    @Transient
-    private List<UserHasClothes> userHasClothes;
-
-    @Transient
-    private List<UserHasInstruments> userHasInstruments;
-
 
     public static Users from(UsersResponse userDTO) {
         return Users.builder()
@@ -71,9 +62,6 @@ public class Users {
                 .password(createUserRequest.getPassword())
                 .phone(createUserRequest.getPhone())
                 .usersBand(new ArrayList<>())
-                .userGoTravel(new ArrayList<>())
-                .userHasClothes(new ArrayList<>())
-                .userHasInstruments(new ArrayList<>())
                 .created_at(new Date())
                 .build();
 
