@@ -49,7 +49,7 @@ public class Codes {
 
     public static Codes from(CreateCodeRequest codeRequest, VoicesResponse voice, BandsResponse band) {
         return Codes.builder()
-                .code(String.valueOf(RANDOM.nextInt(1000000)))
+                .code(String.format("%06d", RANDOM.nextInt(1_000_000)))
                 .endDate(codeRequest.getEnd_date())
                 .voice_id(voice != null ? Voices.from(voice) : null)
                 .band_id(Bands.from(band))
