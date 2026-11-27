@@ -22,7 +22,9 @@ Error responses keep the same shape:
 - `POST /api/band/registerBand`: `createBandRequest.user` is optional and ignored. The band creator is the user in the token.
 - `POST /api/codes/joinBandByCode`: `user` is optional and ignored. The user who joins is the user in the token.
 
-The frontend can keep sending `user`.
+The frontend can stop sending `user` in both requests, or keep sending it: both forms work and are
+covered by integration tests (`joinBandByCodeWithoutUserInTheBody`, `joinBandByCodeIgnoresTheUserInTheBody`,
+`registerBandWithoutUserInTheBody`, `registerBandIgnoresTheUserInTheBody`). Validation no longer requires it.
 
 ## 2. Authorization per band (403, code 12)
 

@@ -84,11 +84,7 @@ class BandAuthorizationTests {
         leader = register("Jefe");
         outsider = register("Ajeno");
 
-        MockMultipartFile request = new MockMultipartFile("createBandRequest", "", MediaType.APPLICATION_JSON_VALUE,
-                "{\"name\":\"Banda Prueba\"}".getBytes());
-        MockMultipartFile logo = new MockMultipartFile("img", "logo.png", MediaType.IMAGE_PNG_VALUE, new byte[]{1});
-        bandId = body(mvc.perform(multipart("/api/band/registerBand").file(request).file(logo).header(HttpHeaders.AUTHORIZATION, director.token()))
-                .andExpect(status().isCreated()).andReturn()).get("id").asText();
+        bandId = registerBand(director, "{\"name\":\"Banda Prueba\"}");
 
         drumVoiceId = addVoice("Tambor");
         snareVoiceId = addVoice("Caja");
@@ -138,15 +134,42 @@ class BandAuthorizationTests {
     }
 
     @Test
-    void userInTheBodyIsIgnored() throws Exception {
-        String code = createCode(drumVoiceId);
-        String body = json.writeValueAsString(Map.of("code", code, "user", Map.of("id", director.id())));
+    void joinBandByCodeWithoutUserInTheBody() throws Exception {
+        String body = json.writeValueAsString(Map.of("code", createCode(drumVoiceId)));
 
         mvc.perform(as(outsider, post("/api/codes/joinBandByCode")).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isOk());
 
-        mvc.perform(as(outsider, get("/api/userBands/getBandUsers").param("id", bandId)))
+        assertThat(roleOf(bandUsers(outsider, bandId), outsider)).isEqualTo("COMPONENTE");
+    }
+
+    @Test
+    void joinBandByCodeIgnoresTheUserInTheBody() throws Exception {
+        String body = json.writeValueAsString(Map.of("code", createCode(drumVoiceId), "user", Map.of("id", director.id())));
+
+        mvc.perform(as(outsider, post("/api/codes/joinBandByCode")).contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isOk());
+
+        // The token user joined; the body user (already the director) is untouched
+        JsonNode members = bandUsers(outsider, bandId);
+        assertThat(roleOf(members, outsider)).isEqualTo("COMPONENTE");
+        assertThat(roleOf(members, director)).isEqualTo("DIRECTOR");
+    }
+
+    @Test
+    void registerBandWithoutUserInTheBody() throws Exception {
+        String newBand = registerBand(outsider, "{\"name\":\"Banda Nueva\"}");
+
+        assertThat(roleOf(bandUsers(outsider, newBand), outsider)).isEqualTo("DIRECTOR");
+    }
+
+    @Test
+    void registerBandIgnoresTheUserInTheBody() throws Exception {
+        String newBand = registerBand(outsider, "{\"name\":\"Banda Nueva\",\"user\":{\"id\":\"" + director.id() + "\"}}");
+
+        JsonNode members = bandUsers(outsider, newBand);
+        assertThat(members).hasSize(1);
+        assertThat(roleOf(members, outsider)).isEqualTo("DIRECTOR");
     }
 
     @Test
@@ -246,6 +269,19 @@ class BandAuthorizationTests {
         MvcResult result = mvc.perform(post("/api/users/registerUser").contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn();
         return new User(body(result).get("id").asText(), result.getResponse().getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
+    private String registerBand(User user, String createBandRequestJson) throws Exception {
+        MockMultipartFile request = new MockMultipartFile("createBandRequest", "", MediaType.APPLICATION_JSON_VALUE,
+                createBandRequestJson.getBytes());
+        MockMultipartFile logo = new MockMultipartFile("img", "logo.png", MediaType.IMAGE_PNG_VALUE, new byte[]{1});
+        return body(mvc.perform(multipart("/api/band/registerBand").file(request).file(logo).header(HttpHeaders.AUTHORIZATION, user.token()))
+                .andExpect(status().isCreated()).andReturn()).get("id").asText();
+    }
+
+    private JsonNode bandUsers(User user, String band) throws Exception {
+        return body(mvc.perform(as(user, get("/api/userBands/getBandUsers").param("id", band)))
+                .andExpect(status().isOk()).andReturn());
     }
 
     private String addVoice(String name) throws Exception {
