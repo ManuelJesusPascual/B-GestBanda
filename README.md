@@ -85,7 +85,7 @@ export JWT_SECRET=$(openssl rand -base64 64)
 
 ## API
 
-All endpoints except sign-up and login need the header `Authorization: Bearer <token>`. Without a valid token the API returns `401`.
+All endpoints except sign-up and login need the header `Authorization: Bearer <token>` (the token without the prefix is also accepted). Without a valid token the API returns `401`.
 
 ### Permissions
 
@@ -185,6 +185,17 @@ Unit tests cover sign-up and login validation, band registration and joining by 
 - **Long-lived tokens, no refresh or revocation.** A JWT is valid for 30 days and cannot be revoked before it expires. A production version would use short-lived access tokens with refresh tokens.
 - **Manual input validation.** Each request DTO validates itself in a `validate()` method instead of using Bean Validation (`@Valid`, `@NotNull`...). It works and returns clear messages, but it is more code than the standard approach.
 - **Image hosting depends on Imgur.** Registering a band fails (`424`) without `IMGUR_CLIENT_ID`.
+
+## Known design debt
+
+The API was designed together with the first version of the mobile app, and its contract is kept as is so the app keeps working. These are the points I would change in a v2, served under `/api/v2` next to the current API so the app can migrate one screen at a time:
+
+| Today | Problem | In a v2 REST API |
+|---|---|---|
+| RPC-style URLs with the action in the path: `GET /api/users/getUserByID?id=`, `POST /api/band/registerBand`, `DELETE /api/userBands/deleteUserBand?idUser=&idBand=` | The HTTP method and the URL say the same thing twice, and the resources are not visible in the URL. | Resources and HTTP methods: `GET /users/{id}`, `POST /bands`, `GET /bands/{id}/members`, `PATCH /bands/{bandId}/members/{userId}`, `DELETE /bands/{bandId}/members/{userId}`, `POST /bands/{id}/invitations`, `POST /invitations/{code}/accept`. Return `201` with a `Location` header on create and `204` on delete. |
+| The token is returned in the `Authorization` response header, and the app sends it back without the `Bearer` prefix (both forms are accepted). | Response headers are easy to lose in clients and proxies, and a non-standard request header breaks generic HTTP clients. | `POST /auth/login` returns `{ "accessToken": "...", "tokenType": "Bearer", "expiresIn": 900 }` in the body, plus a refresh token. Requests require `Authorization: Bearer <token>`. |
+| The sign-up form sends `confirmPassword` to the server, which ignores it. | Confirming the password is a UI concern. Sending it adds a sensitive field to every request for nothing. | The app checks it locally and does not send it. The server keeps validating the password itself. |
+| Inconsistent JSON keys: `band_uuid` in `addVoiceToBand` but `band_id` elsewhere, snake_case (`created_at`, `end_date`) mixed with camelCase (`endDate`, `createdDate`), and Spanish and English names. | Each client has to learn every DTO separately, and mistakes only show up at runtime. | One convention for the whole API (camelCase, English), configured once with Jackson's `PropertyNamingStrategies` instead of per field, and an OpenAPI document generated from the code so clients can generate their models. |
 
 ## Roadmap
 

@@ -85,7 +85,7 @@ export JWT_SECRET=$(openssl rand -base64 64)
 
 ## API
 
-Todos los endpoints salvo el registro y el login necesitan la cabecera `Authorization: Bearer <token>`. Sin un token válido la API devuelve `401`.
+Todos los endpoints salvo el registro y el login necesitan la cabecera `Authorization: Bearer <token>` (también se acepta el token sin el prefijo). Sin un token válido la API devuelve `401`.
 
 ### Permisos
 
@@ -185,6 +185,17 @@ Los tests unitarios cubren la validación del registro y el login, el registro d
 - **Tokens de larga duración, sin refresco ni revocación.** Un JWT es válido durante 30 días y no se puede revocar antes de que caduque. Una versión para producción usaría tokens de acceso de corta duración con tokens de refresco.
 - **Validación manual de las entradas.** Cada DTO de petición se valida a sí mismo con un método `validate()` en lugar de usar Bean Validation (`@Valid`, `@NotNull`...). Funciona y devuelve mensajes claros, pero supone más código que el enfoque estándar.
 - **El alojamiento de imágenes depende de Imgur.** Sin `IMGUR_CLIENT_ID`, registrar una banda falla (`424`).
+
+## Deuda de diseño conocida
+
+La API se diseñó junto con la primera versión de la app móvil, y su contrato se mantiene tal cual para que la app siga funcionando. Estos son los puntos que cambiaría en una v2, publicada en `/api/v2` junto a la API actual para que la app pueda migrar pantalla a pantalla:
+
+| Hoy | Problema | En una API v2 REST |
+|---|---|---|
+| URLs estilo RPC con la acción en la ruta: `GET /api/users/getUserByID?id=`, `POST /api/band/registerBand`, `DELETE /api/userBands/deleteUserBand?idUser=&idBand=` | El método HTTP y la URL dicen lo mismo dos veces, y los recursos no se ven en la URL. | Recursos y métodos HTTP: `GET /users/{id}`, `POST /bands`, `GET /bands/{id}/members`, `PATCH /bands/{bandId}/members/{userId}`, `DELETE /bands/{bandId}/members/{userId}`, `POST /bands/{id}/invitations`, `POST /invitations/{code}/accept`. Devolver `201` con cabecera `Location` al crear y `204` al borrar. |
+| El token se devuelve en la cabecera `Authorization` de la respuesta, y la app lo reenvía sin el prefijo `Bearer` (se aceptan las dos formas). | Las cabeceras de respuesta se pierden con facilidad en clientes y proxies, y una cabecera de petición no estándar rompe los clientes HTTP genéricos. | `POST /auth/login` devuelve `{ "accessToken": "...", "tokenType": "Bearer", "expiresIn": 900 }` en el cuerpo, junto con un token de refresco. Las peticiones exigen `Authorization: Bearer <token>`. |
+| El formulario de registro envía `confirmPassword` al servidor, que lo ignora. | Confirmar la contraseña es cosa de la interfaz. Enviarla añade un campo sensible a cada petición sin ningún motivo. | La app lo comprueba en local y no lo envía. El servidor sigue validando la contraseña. |
+| Claves JSON incoherentes: `band_uuid` en `addVoiceToBand` pero `band_id` en el resto, snake_case (`created_at`, `end_date`) mezclado con camelCase (`endDate`, `createdDate`), y nombres en español y en inglés. | Cada cliente tiene que aprenderse cada DTO por separado, y los errores solo aparecen en tiempo de ejecución. | Una sola convención para toda la API (camelCase, en inglés), configurada una vez con `PropertyNamingStrategies` de Jackson en lugar de campo a campo, y un documento OpenAPI generado desde el código para que los clientes generen sus modelos. |
 
 ## Roadmap
 

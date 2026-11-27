@@ -72,6 +72,11 @@ Codes are zero-padded (for example `004821`). Before, codes below 100000 had few
 (epoch milliseconds, for example `1795810700469`). Now it is an ISO string like every other error:
 `"2026-11-27T19:40:11.714+00:00"`. The rest of the body does not change.
 
+## 8. The token is accepted with or without `Bearer `
+
+`Authorization: Bearer <token>`, `Authorization: bearer <token>` and `Authorization: <token>` all work.
+Nothing changes for clients that already send the prefix.
+
 ## No change needed
 
 - Sprint 3 endpoints (`/api/bandVoices/*`, `/api/codes/*` CRUD, `modifyUserBand`, `deleteUserBand`, `getAllRoles`) are now in `main` with the same contract as the `01112024-LogicaGestionComponentes` branch.
