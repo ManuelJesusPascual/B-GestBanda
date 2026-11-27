@@ -4,9 +4,11 @@ import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.codes.JoinBandRequest;
 import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
+import com.mjpascual.gestbanda.dto.voices.VoicesResponse;
 import com.mjpascual.gestbanda.entities.Bands;
 import com.mjpascual.gestbanda.entities.Codes;
 import com.mjpascual.gestbanda.entities.UsersBand;
+import com.mjpascual.gestbanda.entities.Voices;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.CodesRepository;
@@ -69,6 +71,10 @@ class JoinBandByCodeTest {
         band.setId(UUID.randomUUID());
         band.setName("Test Band");
         validCode.setBand_id(band);
+        Voices voice = new Voices();
+        voice.setId(UUID.randomUUID());
+        voice.setName("Sin Voz");
+        validCode.setVoice_id(voice);
         when(codesRepository.findByCode(VALID_CODE)).thenReturn(validCode);
 
         // Setup for expired code
@@ -83,14 +89,14 @@ class JoinBandByCodeTest {
     }
 
     /**
-     * Test to verify that a valid code returns the corresponding band response.
+     * Test to verify that a valid code returns the corresponding code.
      * It asserts that the response is not null and that the repository
      * was called with the valid code.
      */
     @Test
-    void getBandByCode_WithValidCode_ShouldReturnBand() {
+    void getCode_WithValidCode_ShouldReturnBand() {
         // Act
-        BandsResponse response = codesService.getBandByCode(VALID_CODE);
+        Codes response = codesService.getCode(VALID_CODE);
 
         // Assert
         assertNotNull(response);
@@ -102,9 +108,9 @@ class JoinBandByCodeTest {
      * with the appropriate error code.
      */
     @Test
-    void getBandByCode_WithExpiredCode_ShouldThrowException() {
+    void getCode_WithExpiredCode_ShouldThrowException() {
         try {
-            codesService.getBandByCode(EXPIRED_CODE);
+            codesService.getCode(EXPIRED_CODE);
             fail("Expected GestBandaException to be thrown");
         } catch (GestBandaException e) {
             assertEquals(ErrorCodes.CODE_EXPIRED, e.getCode());
@@ -117,9 +123,9 @@ class JoinBandByCodeTest {
      * with the appropriate error code.
      */
     @Test
-    void getBandByCode_WithInvalidCode_ShouldThrowException() {
+    void getCode_WithInvalidCode_ShouldThrowException() {
         try {
-            codesService.getBandByCode(INVALID_CODE);
+            codesService.getCode(INVALID_CODE);
             fail("Expected GestBandaException to be thrown");
         } catch (GestBandaException e) {
             assertEquals(ErrorCodes.CODE_NOT_FOUND, e.getCode());
@@ -147,7 +153,7 @@ class JoinBandByCodeTest {
         request.setUser(user);
 
         when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
-        doNothing().when(usersBandService).insertUserBand(any(BandsResponse.class), any(UsersResponse.class));
+        doNothing().when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
 
         // Act
         BandsResponse response = codesService.joinBandByCode(request);
@@ -156,7 +162,7 @@ class JoinBandByCodeTest {
         assertNotNull(response);
         verify(codesRepository).findByCode(VALID_CODE);
         verify(usersService).checkUser(any(UsersResponse.class));
-        verify(usersBandService).insertUserBand(any(BandsResponse.class), any(UsersResponse.class));
+        verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
     }
 
     /**
@@ -206,14 +212,14 @@ class JoinBandByCodeTest {
 
         when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
         doThrow(new GestBandaException(new Exception(), "Usuario ya en la banda", ErrorCodes.USER_ALREADY_IN_BAND))
-                .when(usersBandService).insertUserBand(any(BandsResponse.class), any(UsersResponse.class));
+                .when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
 
         try {
             codesService.joinBandByCode(request);
             fail("Expected GestBandaException to be thrown");
         } catch (GestBandaException e) {
             assertEquals(ErrorCodes.USER_ALREADY_IN_BAND, e.getCode());
-            verify(usersBandService).insertUserBand(any(BandsResponse.class), any(UsersResponse.class));
+            verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class));
         }
     }
 }

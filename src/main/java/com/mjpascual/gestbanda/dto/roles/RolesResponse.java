@@ -3,7 +3,9 @@ package com.mjpascual.gestbanda.dto.roles;
 import com.mjpascual.gestbanda.entities.Roles;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -29,6 +31,14 @@ public class RolesResponse {
                 .created_at(rol.getCreated_at())
                 .build();
 
+    }
+
+    public static List<RolesResponse> from(List<Roles> rolesList) {
+        List<RolesResponse> rolesResponses = new ArrayList<>();
+        for(Roles role : rolesList) {
+            rolesResponses.add(RolesResponse.from(role));
+        }
+        return rolesResponses;
     }
 }
 

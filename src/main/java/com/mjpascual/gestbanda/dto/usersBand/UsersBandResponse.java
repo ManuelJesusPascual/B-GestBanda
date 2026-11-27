@@ -5,7 +5,9 @@ import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 
+import com.mjpascual.gestbanda.dto.voices.VoicesResponse;
 import com.mjpascual.gestbanda.entities.UsersBand;
+import com.mjpascual.gestbanda.entities.Voices;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ public class UsersBandResponse {
 
     private RolesResponse role;
 
+    private VoicesResponse voice;
 
     public static UsersBandResponse from(UsersBand usersBand) {
 
@@ -34,6 +37,7 @@ public class UsersBandResponse {
                 .band(BandsResponse.from(usersBand.getBand_id()))
                 .user(UsersResponse.from(usersBand.getUser_id()))
                 .role(RolesResponse.from(usersBand.getRol_id()))
+                .voice(usersBand.getVoice_id() != null ? VoicesResponse.from(usersBand.getVoice_id()) : null)
                 .build();
 
 

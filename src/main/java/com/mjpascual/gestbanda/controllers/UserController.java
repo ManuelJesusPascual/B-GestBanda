@@ -6,10 +6,9 @@ import com.mjpascual.gestbanda.services.UsersService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 import static com.mjpascual.gestbanda.config.Security.TokenUtils.createToken;
 
@@ -48,4 +47,25 @@ public class UserController {
 
         return new ResponseEntity<>(response, headers, HttpStatus.CREATED);
     }
+
+    /**
+     * Retrieves a user by their unique identifier (UUID).
+     *
+     * This method processes a GET request to the "/getUserByID" endpoint.
+     * It takes a UUID as a request parameter and uses the usersService
+     * to find and return the corresponding user data encapsulated in a
+     * UsersResponse object.
+     *
+     * @param id The unique identifier of the user to be retrieved.
+     * @return A ResponseEntity containing the UsersResponse object and
+     *         an HTTP status of OK (200) if the user is found.
+     */
+    @GetMapping("/getUserByID")
+    public ResponseEntity<UsersResponse> getUserById(@RequestParam("id") UUID id) {
+        UsersResponse response;
+        response = usersService.findUser(id);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.mjpascual.gestbanda.dto.usersBand;
 import com.mjpascual.gestbanda.dto.bands.BandsResponse;
 import com.mjpascual.gestbanda.dto.roles.RolesResponse;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
+import com.mjpascual.gestbanda.dto.voices.VoicesResponse;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.interfaces.IValidator;
@@ -21,6 +22,7 @@ public class CreateUsersBandRequest implements IValidator {
     private BandsResponse band_id;    // Represents the band associated with the user-band relationship
     private UsersResponse user_id;    // Represents the user associated with the band
     private RolesResponse role_id;    // Represents the role of the user in the band
+    private VoicesResponse voice_id; // Represents the voice of the user in the band
 
     /**
      * Verifies that the required fields are not null. Throws a GestBandaException if
