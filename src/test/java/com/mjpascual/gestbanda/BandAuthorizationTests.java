@@ -178,6 +178,31 @@ class BandAuthorizationTests {
     }
 
     @Test
+    void voiceLeaderCanNeverAssignTheDirectorRole() throws Exception {
+        modify(leader, leader, roleId("DIRECTOR"), drumVoiceId).andExpect(status().isForbidden());
+        modify(leader, member, roleId("JEFE DE VOZ"), drumVoiceId).andExpect(status().isForbidden());
+        modify(leader, director, roleId("COMPONENTE"), drumVoiceId).andExpect(status().isForbidden());
+
+        JsonNode members = body(mvc.perform(as(director, get("/api/userBands/getBandUsers").param("id", bandId))).andReturn());
+        assertThat(roleOf(members, leader)).isEqualTo("JEFE DE VOZ");
+        assertThat(roleOf(members, member)).isEqualTo("COMPONENTE");
+        assertThat(roleOf(members, director)).isEqualTo("DIRECTOR");
+    }
+
+    @Test
+    void voiceLeaderCannotManageMembersOfAnotherVoice() throws Exception {
+        modify(director, member, roleId("COMPONENTE"), snareVoiceId).andExpect(status().isOk());
+
+        modify(leader, member, roleId("COMPONENTE"), drumVoiceId).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void voiceLeaderCanRemoveMembersOfTheirVoice() throws Exception {
+        mvc.perform(as(leader, delete("/api/userBands/deleteUserBand").param("idUser", member.id()).param("idBand", bandId)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void membersCanLeaveButNotRemoveOthers() throws Exception {
         mvc.perform(as(member, delete("/api/userBands/deleteUserBand").param("idUser", leader.id()).param("idBand", bandId)))
                 .andExpect(status().isForbidden());
