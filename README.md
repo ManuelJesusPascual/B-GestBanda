@@ -21,6 +21,7 @@ Most bands keep their member list, who plays which part and who has been invited
 - Join a band with a code.
 - Manage the voices of a band: add, list, list the missing ones and remove. Removing a voice moves its members and codes to *Sin Voz*.
 - Manage members: list, change their role and voice, and remove them.
+- Per-band authorization based on the role of the user in the token.
 - Input validation with clear error messages and consistent error responses.
 
 ## Tech stack
@@ -84,7 +85,19 @@ export JWT_SECRET=$(openssl rand -base64 64)
 
 ## API
 
-All endpoints except sign-up and login need the header `Authorization: Bearer <token>`.
+All endpoints except sign-up and login need the header `Authorization: Bearer <token>`. Without a valid token the API returns `401`.
+
+### Permissions
+
+The user is always the one in the token; a `user` sent in the body is ignored. Each member has one role per band:
+
+| Role | Can |
+|---|---|
+| `DIRECTOR` | Everything in the band: members, roles, voices and invitation codes. |
+| `JEFE DE VOZ` (voice leader) | What a member can, plus change the voice of, or remove, the `COMPONENTE` members of their own voice. |
+| `COMPONENTE` (member) | See the band, its members and voices, and leave the band. |
+
+Anything else returns `403` (`code: 12`). The full list per endpoint is in [API_CHANGES.md](API_CHANGES.md).
 
 | Method | Path | Description |
 |---|---|---|
@@ -165,7 +178,7 @@ Errors always have the same shape:
 ./mvnw verify
 ```
 
-Unit tests cover sign-up and login validation, band registration and joining by code. An integration test starts the application against PostgreSQL with Testcontainers, so Docker must be running.
+Unit tests cover sign-up and login validation, band registration and joining by code. Integration tests run the API against PostgreSQL with Testcontainers and check the permissions of each role, the `401`/`403`/`404` responses and the role given when joining. Docker must be running.
 
 ## Roadmap
 

@@ -21,6 +21,7 @@ La mayoría de las bandas llevan la lista de componentes, quién toca cada voz y
 - Unirse a una banda con un código.
 - Gestionar las voces de una banda: añadir, listar, listar las que faltan y quitar. Al quitar una voz, sus componentes y códigos pasan a *Sin Voz*.
 - Gestionar componentes: listar, cambiar su rol y su voz, y quitarlos de la banda.
+- Permisos por banda según el rol del usuario del token.
 - Validación de las entradas con mensajes claros y respuestas de error homogéneas.
 
 ## Stack
@@ -84,7 +85,19 @@ export JWT_SECRET=$(openssl rand -base64 64)
 
 ## API
 
-Todos los endpoints salvo el registro y el login necesitan la cabecera `Authorization: Bearer <token>`.
+Todos los endpoints salvo el registro y el login necesitan la cabecera `Authorization: Bearer <token>`. Sin un token válido la API devuelve `401`.
+
+### Permisos
+
+El usuario es siempre el del token; si se envía un `user` en el body, se ignora. Cada componente tiene un rol en cada banda:
+
+| Rol | Puede |
+|---|---|
+| `DIRECTOR` | Todo en la banda: componentes, roles, voces y códigos de invitación. |
+| `JEFE DE VOZ` | Lo mismo que un componente y, además, cambiar de voz o quitar de la banda a los `COMPONENTE` de su voz. |
+| `COMPONENTE` | Ver la banda, sus componentes y sus voces, y salir de la banda. |
+
+Cualquier otra acción devuelve `403` (`code: 12`). La lista completa por endpoint está en [API_CHANGES.md](API_CHANGES.md).
 
 | Método | Ruta | Descripción |
 |---|---|---|
@@ -165,7 +178,7 @@ Los errores siempre tienen la misma forma:
 ./mvnw verify
 ```
 
-Los tests unitarios cubren la validación del registro y el login, el registro de bandas y la unión por código. Un test de integración arranca la aplicación contra PostgreSQL con Testcontainers, así que Docker tiene que estar en marcha.
+Los tests unitarios cubren la validación del registro y el login, el registro de bandas y la unión por código. Los tests de integración ejecutan la API contra PostgreSQL con Testcontainers y comprueban los permisos de cada rol, las respuestas `401`/`403`/`404` y el rol que se asigna al unirse. Docker tiene que estar en marcha.
 
 ## Roadmap
 
