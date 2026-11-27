@@ -1,5 +1,6 @@
 package com.mjpascual.gestbanda.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +20,7 @@ import java.util.TimeZone;
 /**
  * Class that handles exceptions in the application
  */
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -34,6 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(GestBandaException.class)
     public ResponseEntity<ErrorDetailed> handleMainException(
             GestBandaException exception, WebRequest webRequest) {
+        log.warn("{} {}: {}", exception.getCode(), webRequest.getDescription(false), exception.getMessage());
         ErrorDetailed errorDetails =
                 new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), exception.getMessage(),
                         exception.getCode().getCode());
@@ -76,6 +79,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetailed> handleGeneralException(
             Exception exception, WebRequest webRequest) {
+        log.error("Unexpected error on {}", webRequest.getDescription(false), exception);
         ErrorDetailed errorDetails =
                 new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), exception.getMessage(),
                         ErrorCodes.GENERIC_ERROR.getCode());

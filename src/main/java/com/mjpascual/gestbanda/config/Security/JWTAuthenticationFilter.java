@@ -7,6 +7,7 @@ import com.mjpascual.gestbanda.exceptions.ErrorDetailed;
 import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.services.UsersService;
 import jakarta.servlet.FilterChain;
+import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ import java.util.TimeZone;
 /**
  * Filter that will authorize the user to access the endpoints
  */
+@Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UsersService usersService;
@@ -114,6 +116,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
      */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        log.info("Failed login attempt: {}", failed.getClass().getSimpleName());
         ErrorDetailed errorDetails =
                 new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), "Las credenciales no son válidas",
                         ErrorCodes.USER_NOT_FOUND.getCode());
