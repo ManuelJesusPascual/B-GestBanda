@@ -29,7 +29,7 @@ La mayoría de las bandas llevan la lista de componentes, quién toca cada voz y
 | | |
 |---|---|
 | Lenguaje | Java 21 |
-| Framework | Spring Boot 3.5 (Web, Data JPA, Security) |
+| Framework | Spring Boot 4.2 (Web MVC, Data JPA, Security) |
 | Autenticación | JWT (jjwt) + BCrypt |
 | Base de datos | PostgreSQL 16, esquema gestionado con Liquibase |
 | Tests | JUnit 5, Mockito, Testcontainers |

@@ -1,6 +1,6 @@
 package com.mjpascual.gestbanda.users;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.mjpascual.gestbanda.config.Security.AuthCredentials;
 import com.mjpascual.gestbanda.config.Security.JWTAuthenticationFilter;
 import com.mjpascual.gestbanda.config.Security.TokenUtils;

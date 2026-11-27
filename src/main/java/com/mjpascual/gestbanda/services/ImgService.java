@@ -8,7 +8,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,9 +34,9 @@ public class ImgService {
     private String uploadUrl;
 
     /**
-     * RestTemplate instance for handling HTTP requests and responses.
+     * HTTP client used to call the Imgur API.
      */
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestClient restClient = RestClient.create();
 
     /**
      * Uploads an image to Imgur by encoding it and sending it in a multipart/form-data request.
@@ -50,16 +50,16 @@ public class ImgService {
         try {
             String encodedImage = getEncodedImg(img);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            headers.set("Authorization", "Client-ID " + clientId);
-
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("image", encodedImage);
 
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-
-            response = restTemplate.exchange(uploadUrl, HttpMethod.POST, requestEntity, ImgResponse.class);
+            response = restClient.post()
+                    .uri(uploadUrl)
+                    .header(HttpHeaders.AUTHORIZATION, "Client-ID " + clientId)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(body)
+                    .retrieve()
+                    .toEntity(ImgResponse.class);
 
         } catch (Exception e) {
             throw new GestBandaException(new Exception(), "Error al intentar guardar la imagen", ErrorCodes.UPLOAD_IMAGE_ERROR);

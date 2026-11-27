@@ -1,6 +1,7 @@
 package com.mjpascual.gestbanda.config.Security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.mjpascual.gestbanda.dto.users.UsersResponse;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.ErrorDetailed;
@@ -52,7 +53,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             authCredentials = objectMapper.readValue(request.getReader(), AuthCredentials.class);
 
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             ErrorDetailed errorDetails =
                     new ErrorDetailed(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime(), "Error al leer los datos de inicio de sesión",
                             ErrorCodes.READ_ERROR.getCode());

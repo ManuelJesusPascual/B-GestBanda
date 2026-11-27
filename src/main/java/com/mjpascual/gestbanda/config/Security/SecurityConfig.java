@@ -1,6 +1,6 @@
 package com.mjpascual.gestbanda.config.Security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.mjpascual.gestbanda.exceptions.ErrorCodes;
 import com.mjpascual.gestbanda.exceptions.ErrorDetailed;
 import com.mjpascual.gestbanda.services.UsersService;
@@ -101,9 +101,8 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailService);
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetailService);
         return provider;
     }
 

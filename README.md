@@ -29,7 +29,7 @@ Most bands keep their member list, who plays which part and who has been invited
 | | |
 |---|---|
 | Language | Java 21 |
-| Framework | Spring Boot 3.5 (Web, Data JPA, Security) |
+| Framework | Spring Boot 4.2 (Web MVC, Data JPA, Security) |
 | Auth | JWT (jjwt) + BCrypt |
 | Database | PostgreSQL 16, schema managed with Liquibase |
 | Tests | JUnit 5, Mockito, Testcontainers |
