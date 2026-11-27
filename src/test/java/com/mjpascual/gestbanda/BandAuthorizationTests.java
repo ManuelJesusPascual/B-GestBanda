@@ -241,7 +241,8 @@ class BandAuthorizationTests {
     private User register(String name) throws Exception {
         int phone = PHONE.incrementAndGet();
         String body = json.writeValueAsString(Map.of(
-                "name", name, "email", name.toLowerCase() + phone + "@example.com", "phone", String.valueOf(phone), "password", "Password1!"));
+                "name", name, "email", name.toLowerCase() + phone + "@example.com", "phone", String.valueOf(phone), "password", "Password1!",
+                "confirmPassword", "Password1!")); // the mobile app sends it; the API ignores it
         MvcResult result = mvc.perform(post("/api/users/registerUser").contentType(MediaType.APPLICATION_JSON).content(body))
                 .andExpect(status().isCreated()).andReturn();
         return new User(body(result).get("id").asText(), result.getResponse().getHeader(HttpHeaders.AUTHORIZATION));
