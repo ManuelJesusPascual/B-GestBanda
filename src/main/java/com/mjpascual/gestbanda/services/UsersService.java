@@ -30,6 +30,7 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
+    private final BandAccessService bandAccessService;
 
     /**
      * Constructs a new UsersService instance with dependencies injected.
@@ -38,7 +39,8 @@ public class UsersService {
      * @param usersRepository Repository for accessing user data
      * @param passwordEncoder Encoder for encoding user passwords
      */
-    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder) {
+    public UsersService(UsersRepository usersRepository, @Lazy PasswordEncoder passwordEncoder, BandAccessService bandAccessService) {
+        this.bandAccessService = bandAccessService;
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -108,6 +110,7 @@ public class UsersService {
 
     /**
      * Finds and retrieves a user by their unique ID.
+     * Only the user themself or someone who shares a band with them can see it.
      * Throws an exception if the user is not found.
      *
      * @param id UUID of the user to find
@@ -115,26 +118,9 @@ public class UsersService {
      */
     @Transactional(rollbackOn = Exception.class)
     public UsersResponse findUser(UUID id) {
+        bandAccessService.requireSelfOrSharedBand(id);
         Users user = usersRepository.findById(id).orElseThrow(() -> new GestBandaException(new Exception(), "Usuario no encontrado", ErrorCodes.USER_NOT_FOUND));
         return UsersResponse.from(user);
-    }
-
-    /**
-     * Checks the validity of a user based on a UsersResponse object.
-     * Throws an exception if the user is invalid.
-     *
-     * @param usersResponse UsersResponse containing user details to validate
-     * @return UsersResponse with confirmed user information
-     */
-    @Transactional
-    public UsersResponse checkUser(UsersResponse usersResponse) {
-        UsersResponse user;
-        try {
-            user = findUser(usersResponse.getId());
-        } catch (Exception e) {
-            throw new GestBandaException(new Exception(), "El usuario que intenta crear la banda no es válido", ErrorCodes.ARGUMENT_NOT_VALID);
-        }
-        return user;
     }
 
 

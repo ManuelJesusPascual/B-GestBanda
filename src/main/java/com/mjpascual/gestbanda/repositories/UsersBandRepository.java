@@ -21,6 +21,9 @@ public interface UsersBandRepository extends JpaRepository<UsersBand, UUID> {
     @Query(value = "SELECT * FROM user_band WHERE band_id = ?1", nativeQuery = true)
     public List<UsersBand> findByBandID(UUID bandID);
 
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM user_band a JOIN user_band b ON a.band_id = b.band_id WHERE a.user_id = ?1 AND b.user_id = ?2)", nativeQuery = true)
+    boolean shareABand(UUID userA, UUID userB);
+
     @Modifying
     @Query(value = "UPDATE user_band SET voice_id = ?1,rol_id = ?2,updated_at = ?5 WHERE user_id = ?3 AND band_id = ?4", nativeQuery = true)
     void updateUserVoice(UUID voiceID, UUID roleID, UUID userID, UUID bandID, Date updatedAt);

@@ -14,7 +14,7 @@ import com.mjpascual.gestbanda.exceptions.GestBandaException;
 import com.mjpascual.gestbanda.repositories.CodesRepository;
 import com.mjpascual.gestbanda.services.CodesService;
 import com.mjpascual.gestbanda.services.UsersBandService;
-import com.mjpascual.gestbanda.services.UsersService;
+import com.mjpascual.gestbanda.services.BandAccessService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,7 +44,7 @@ class JoinBandByCodeTest {
     private UsersBandService usersBandService;
 
     @Mock
-    private UsersService usersService;
+    private BandAccessService bandAccessService;
 
     @InjectMocks
     private CodesService codesService;
@@ -154,7 +154,7 @@ class JoinBandByCodeTest {
         request.setCode(VALID_CODE);
         request.setUser(user);
 
-        when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
+        when(bandAccessService.currentUser()).thenReturn(user);
         doNothing().when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), anyString());
 
         // Act
@@ -163,23 +163,23 @@ class JoinBandByCodeTest {
         // Assert
         assertNotNull(response);
         verify(codesRepository).findByCode(VALID_CODE);
-        verify(usersService).checkUser(any(UsersResponse.class));
+        verify(bandAccessService).currentUser();
         verify(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), eq(UsersBandService.ROLE_MEMBER));
     }
 
     /**
-     * Test to verify that providing an invalid user throws a GestBandaException
+     * Test to verify that a request without an authenticated user throws a GestBandaException
      * with the appropriate error code.
      */
     @Test
-    void joinBandByCode_WithInvalidUser_ShouldThrowException() {
+    void joinBandByCode_WithoutAuthenticatedUser_ShouldThrowException() {
         // Arrange
         UsersResponse invalidUser = UsersResponse.builder()
                 .id(UUID.randomUUID())
                 .build();
 
-        when(usersService.checkUser(any(UsersResponse.class)))
-                .thenThrow(new GestBandaException(new Exception(), "Usuario no válido", ErrorCodes.ARGUMENT_NOT_VALID));
+        when(bandAccessService.currentUser())
+                .thenThrow(new GestBandaException(new Exception(), "Usuario no autenticado", ErrorCodes.UNAUTHORIZED));
 
         JoinBandRequest request = new JoinBandRequest();
         request.setCode(VALID_CODE);
@@ -189,8 +189,8 @@ class JoinBandByCodeTest {
             codesService.joinBandByCode(request);
             fail("Expected GestBandaException to be thrown");
         } catch (GestBandaException e) {
-            assertEquals(ErrorCodes.ARGUMENT_NOT_VALID, e.getCode());
-            verify(usersService).checkUser(any(UsersResponse.class));
+            assertEquals(ErrorCodes.UNAUTHORIZED, e.getCode());
+            verify(bandAccessService).currentUser();
         }
     }
 
@@ -212,7 +212,7 @@ class JoinBandByCodeTest {
         request.setCode(VALID_CODE);
         request.setUser(user);
 
-        when(usersService.checkUser(any(UsersResponse.class))).thenReturn(user);
+        when(bandAccessService.currentUser()).thenReturn(user);
         doThrow(new GestBandaException(new Exception(), "Usuario ya en la banda", ErrorCodes.USER_ALREADY_IN_BAND))
                 .when(usersBandService).insertUserBand(any(BandsResponse.class), any(VoicesResponse.class), any(UsersResponse.class), anyString());
 

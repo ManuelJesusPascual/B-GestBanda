@@ -38,14 +38,17 @@ public class UsersBandService {
 
     private final RolesService rolesService;
 
+    private final BandAccessService bandAccessService;
+
     /**
      * Constructor for injecting UsersBandRepository dependency.
      *
      * @param usersBandRepository Repository for managing user-band relationships.
      */
-    public UsersBandService(UsersBandRepository usersBandRepository, RolesService rolesService) {
+    public UsersBandService(UsersBandRepository usersBandRepository, RolesService rolesService, BandAccessService bandAccessService) {
         this.usersBandRepository = usersBandRepository;
         this.rolesService = rolesService;
+        this.bandAccessService = bandAccessService;
     }
 
     /**
@@ -70,6 +73,7 @@ public class UsersBandService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<UsersBandResponse> findByUser(UUID uuid) {
+        bandAccessService.requireSelf(uuid);
         List<UsersBand> userInBand = usersBandRepository.findByUserID(uuid);
         return UsersBandResponse.from(userInBand);
     }
@@ -82,6 +86,7 @@ public class UsersBandService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<UsersBandResponse> findByBand(UUID bandUuid) {
+        bandAccessService.requireMember(bandUuid);
         List<UsersBand> userInBand = usersBandRepository.findByBandID(bandUuid);
         return UsersBandResponse.from(userInBand);
     }
@@ -111,23 +116,45 @@ public class UsersBandService {
 
     /**
      * Modifies an existing user-band relationship based on the provided request.
+     * The director can change anyone. A voice leader can change the voice of the
+     * COMPONENTE members of their own voice, but not their role.
      *
      * @param request The request containing the modifications to be made.
      */
     @Transactional(rollbackOn = Exception.class)
     public void modifyUserBand(ModifyUsersBandRequest request) {
+        UsersBand actor = bandAccessService.requireMember(request.getBand_id());
+        UsersBand target = findMembership(request.getUser_id(), request.getBand_id());
+        bandAccessService.requireCanManage(actor, target);
+        boolean changesRole = !request.getRole_id().equals(target.getRol_id().getId());
+        if (changesRole && !BandAccessService.hasRole(actor, ROLE_DIRECTOR)) {
+            throw new GestBandaException(new Exception(), "Solo el director puede cambiar el rol", ErrorCodes.FORBIDDEN);
+        }
         usersBandRepository.updateUserVoice(request.getVoice_id(), request.getRole_id(), request.getUser_id(), request.getBand_id(), new Date());
     }
 
     /**
      * Deletes a user-band association based on the user ID and band ID.
+     * Members can leave a band. The director and voice leaders can remove the members they manage.
      *
      * @param idUser Unique identifier of the user.
      * @param idBand Unique identifier of the band.
      */
     @Transactional(rollbackOn = Exception.class)
     public void deleteUserBand(UUID idUser, UUID idBand) {
-        UsersBand userBand = usersBandRepository.findByUserBandID(idUser, idBand);
-        usersBandRepository.delete(userBand);
+        UsersBand actor = bandAccessService.requireMember(idBand);
+        UsersBand target = findMembership(idUser, idBand);
+        if (!actor.getId().equals(target.getId())) {
+            bandAccessService.requireCanManage(actor, target);
+        }
+        usersBandRepository.delete(target);
+    }
+
+    private UsersBand findMembership(UUID idUser, UUID idBand) {
+        UsersBand membership = usersBandRepository.findByUserBandID(idUser, idBand);
+        if (isNull(membership)) {
+            throw new GestBandaException(new Exception(), "Ese usuario no pertenece a la banda", ErrorCodes.USER_NOT_FOUND);
+        }
+        return membership;
     }
 }

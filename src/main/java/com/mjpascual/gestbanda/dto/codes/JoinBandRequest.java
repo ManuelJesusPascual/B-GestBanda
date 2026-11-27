@@ -21,21 +21,19 @@ import static java.util.Objects.isNull;
 public class JoinBandRequest implements IValidator {
 
     private String code;
+    // Ignored: the user comes from the JWT. Kept so existing clients can still send it.
     private UsersResponse user;
 
     /**
      * Checks for null values in required fields. If a required field is null, it throws a GestBandaException.
      * This method is part of the validation process.
      *
-     * @throws GestBandaException if the code or user is null
+     * @throws GestBandaException if the code is null
      */
     @Override
     public void verifyNulls() {
         if (isNull(code)) {
             throw new GestBandaException(new Exception(), "No se ha proporcionado un código", ErrorCodes.ARGUMENT_NOT_VALID);
-        }
-        if (isNull(user)) {
-            throw new GestBandaException(new Exception(), "No se ha proporcionado un usuario", ErrorCodes.ARGUMENT_NOT_VALID);
         }
     }
 

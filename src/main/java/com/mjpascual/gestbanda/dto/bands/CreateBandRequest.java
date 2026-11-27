@@ -18,6 +18,7 @@ import static java.util.Objects.isNull;
 public class CreateBandRequest implements IValidator {
 
     private String name;
+    // Ignored: the user comes from the JWT. Kept so existing clients can still send it.
     private UsersResponse user;
 
     /**
@@ -28,9 +29,6 @@ public class CreateBandRequest implements IValidator {
     public void verifyNulls() {
         if (isNull(name)) {
             throw new GestBandaException(new Exception(), "No se ha proporcionado un nombre", ErrorCodes.ARGUMENT_NOT_VALID);
-        }
-        if (isNull(user)) {
-            throw new GestBandaException(new Exception(), "No se ha proporcionado un usuario", ErrorCodes.ARGUMENT_NOT_VALID);
         }
     }
 

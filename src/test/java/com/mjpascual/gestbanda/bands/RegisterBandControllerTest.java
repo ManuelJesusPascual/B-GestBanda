@@ -94,13 +94,16 @@ class RegisterBandControllerTest {
      * Ensures that a GestBandaException is thrown when the user field is null.
      */
     @Test
-    @DisplayName("Fallo al registrar banda - Usuario nulo")
-    void registerBand_NullUser_Failure() {
+    @DisplayName("Registro de banda sin usuario en el body (se toma del JWT)")
+    void registerBand_WithoutBodyUser_Success() {
         CreateBandRequest createBandRequest = new CreateBandRequest("Nombre Valido", null);
         MultipartFile img = mock(MultipartFile.class);
+        when(bandsService.createBand(any(CreateBandRequest.class), any(MultipartFile.class))).thenReturn(new BandsResponse());
 
-        assertThrows(GestBandaException.class, () -> bandController.registerBand(createBandRequest, img));
-        verify(bandsService, never()).createBand(any(CreateBandRequest.class), any(MultipartFile.class));
+        ResponseEntity<BandsResponse> response = bandController.registerBand(createBandRequest, img);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(bandsService, times(1)).createBand(createBandRequest, img);
     }
 
     /**

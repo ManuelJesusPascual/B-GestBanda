@@ -34,6 +34,7 @@ public class BandVoicesService {
     private final VoicesService voicesService;
     private final BandsService bandsService;
     private final VoicesRepository voicesRepository;
+    private final BandAccessService bandAccessService;
 
     /**
      * Constructor for BandVoicesService.
@@ -44,11 +45,12 @@ public class BandVoicesService {
      * @param bandsService         the service for managing bands
      * @param voicesRepository     the repository for performing CRUD operations on voices
      */
-    public BandVoicesService(BandVoicesRepository bandVoicesRepository, VoicesService voicesService, BandsService bandsService, VoicesRepository voicesRepository) {
+    public BandVoicesService(BandVoicesRepository bandVoicesRepository, VoicesService voicesService, BandsService bandsService, VoicesRepository voicesRepository, BandAccessService bandAccessService) {
         this.bandVoicesRepository = bandVoicesRepository;
         this.voicesService = voicesService;
         this.bandsService = bandsService;
         this.voicesRepository = voicesRepository;
+        this.bandAccessService = bandAccessService;
     }
 
     /**
@@ -59,6 +61,7 @@ public class BandVoicesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public VoicesResponse addVoiceToBand(AddVoiceToBandRequest request) {
+        bandAccessService.requireDirector(request.getBand_uuid());
         VoicesResponse voice = voicesService.findVoiceByName(request.getVoice_name());
         BandsResponse band = bandsService.findBandById(request.getBand_uuid());
         BandVoices bandVoice = BandVoices.from(voice, band);
@@ -75,6 +78,7 @@ public class BandVoicesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<VoicesResponse> getVoicesBand(UUID id) {
+        bandAccessService.requireMember(id);
         List<BandVoices> bandVoices = bandVoicesRepository.findAllBandVoices(id);
         List<VoicesResponse> responses = VoicesResponse.fromBandVoices(bandVoices);
         return responses;
@@ -88,6 +92,7 @@ public class BandVoicesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<VoicesResponse> getVoicesBandNotHave(UUID id) {
+        bandAccessService.requireDirector(id);
         List<Voices> voices = voicesRepository.findVoicesBandNotHave(id);
         List<VoicesResponse> responses = VoicesResponse.fromVoices(voices);
         return responses;
@@ -122,6 +127,7 @@ public class BandVoicesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public void deleteVoiceBand(UUID idVoice, UUID idBand) {
+        bandAccessService.requireDirector(idBand);
         BandVoices bandVoices = bandVoicesRepository.checkIfExist(idVoice, idBand);
         if (isNull(bandVoices)) {
             throw new GestBandaException(new Exception(),"No se ha encontrado esa voz en la banda", ErrorCodes.ARGUMENT_NOT_VALID);

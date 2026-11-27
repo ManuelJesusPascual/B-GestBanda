@@ -33,7 +33,7 @@ public class CodesService {
     private final CodesRepository codesRepository;
     private final UsersBandService usersBandService;
     private final VoicesService voicesService;
-    private final UsersService usersService;
+    private final BandAccessService bandAccessService;
     private final BandsService bandsService;
     private final BandVoicesService bandVoicesService;
 
@@ -43,16 +43,16 @@ public class CodesService {
      * @param codesRepository  Repository for managing access codes
      * @param usersBandService Service for managing user-band associations
      * @param voicesService    Service for searching voices
-     * @param usersService     Service for user-related operations
+     * @param bandAccessService Checks what the current user can do in a band
      * @param bandsService     Service for managing bands
      * @param bandVoicesService Service for managing band voices
      */
     @Autowired
-    public CodesService(CodesRepository codesRepository, UsersBandService usersBandService, VoicesService voicesService, UsersService usersService, BandsService bandsService, BandVoicesService bandVoicesService) {
+    public CodesService(CodesRepository codesRepository, UsersBandService usersBandService, VoicesService voicesService, BandAccessService bandAccessService, BandsService bandsService, BandVoicesService bandVoicesService) {
         this.codesRepository = codesRepository;
         this.usersBandService = usersBandService;
         this.voicesService = voicesService;
-        this.usersService = usersService;
+        this.bandAccessService = bandAccessService;
         this.bandsService = bandsService;
         this.bandVoicesService = bandVoicesService;
     }
@@ -97,7 +97,7 @@ public class CodesService {
         BandsResponse band = BandsResponse.from(codeInfo.getBand_id());
         VoicesResponse voice = VoicesResponse.from(codeInfo.getVoice_id());
 
-        UsersResponse user = usersService.checkUser(request.getUser());
+        UsersResponse user = bandAccessService.currentUser(); // request.getUser() is ignored
         usersBandService.insertUserBand(band, voice, user, UsersBandService.ROLE_MEMBER);
 
         return band;
@@ -111,6 +111,7 @@ public class CodesService {
      */
     @Transactional(rollbackOn = Exception.class)
     public List<CodesResponse> getBandCodes(UUID bandID) {
+        bandAccessService.requireDirector(bandID);
         List<Codes> bandCodes = codesRepository.findBandCodes(bandID);
         return CodesResponse.from(bandCodes);
     }
@@ -128,6 +129,7 @@ public class CodesService {
         if (isNull(code)) {
             throw new GestBandaException(new Exception(), "No se ha encontrado ese código en la banda", ErrorCodes.ARGUMENT_NOT_VALID);
         }
+        bandAccessService.requireDirector(code.getBand_id().getId());
         codesRepository.delete(code);
     }
 
@@ -138,6 +140,7 @@ public class CodesService {
      * @return CodesResponse containing the details of the created code
      */
     public CodesResponse createBandCode(CreateCodeRequest request) {
+        bandAccessService.requireDirector(request.getBand_id());
         VoicesResponse voice = null;
         BandsResponse band = bandsService.findBandById(request.getBand_id());
         voice = voicesService.findVoiceById(request.getVoice_id());
@@ -168,11 +171,13 @@ public class CodesService {
 
         // Fetch the existing code by ID, throwing an exception if not found
         code = codesRepository.findById(request.getId()).orElseThrow(() -> new GestBandaException(new Exception(), "Código no encontrado", ErrorCodes.CODE_NOT_FOUND));
+        UUID bandId = code.getBand_id().getId();
+        bandAccessService.requireDirector(bandId);
 
         Voices voice;
 
         // Check if the voice exists in the band and get its ID
-        voice = bandVoicesService.voiceExistInBand(request.getVoice_id(), request.getBand_id()).getId_voice();
+        voice = bandVoicesService.voiceExistInBand(request.getVoice_id(), bandId).getId_voice();
 
         code.setVoice_id(voice);
         code.setUpdated_at(new Date());

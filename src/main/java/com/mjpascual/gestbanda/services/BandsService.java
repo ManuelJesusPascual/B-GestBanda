@@ -38,7 +38,7 @@ public class BandsService {
 
     private final UsersBandService usersBandService;
 
-    private final UsersService usersService;
+    private final BandAccessService bandAccessService;
 
     private final ImgService imgService;
     private final VoicesRepository voicesRepository;
@@ -50,14 +50,14 @@ public class BandsService {
      *
      * @param bandsRepository Repository for Bands entity.
      * @param usersBandService Service for managing users in bands.
-     * @param usersService Service for managing users.
+     * @param bandAccessService Gives the user of the current request.
      * @param imgService Service for managing images.
      */
     @Autowired
-    public BandsService(BandsRepository bandsRepository, UsersBandService usersBandService, UsersService usersService, ImgService imgService, VoicesRepository voicesRepository, BandVoicesRepository bandVoicesRepository) {
+    public BandsService(BandsRepository bandsRepository, UsersBandService usersBandService, BandAccessService bandAccessService, ImgService imgService, VoicesRepository voicesRepository, BandVoicesRepository bandVoicesRepository) {
         this.bandsRepository = bandsRepository;
         this.usersBandService = usersBandService;
-        this.usersService = usersService;
+        this.bandAccessService = bandAccessService;
         this.imgService = imgService;
         this.voicesRepository = voicesRepository;
         this.bandVoicesRepository = bandVoicesRepository;
@@ -72,9 +72,8 @@ public class BandsService {
      */
     @Transactional(rollbackOn = Exception.class)
     public BandsResponse createBand(CreateBandRequest band, MultipartFile img) {
-        // Check if the user exists in the database
-        UsersResponse user;
-        user = usersService.checkUser(band.getUser());
+        // The creator is the user in the JWT; band.getUser() is ignored
+        UsersResponse user = bandAccessService.currentUser();
 
         // Upload image to the image server (in this case imgur)
         ImgResponse imgResponse = imgService.uploadImage(img);
